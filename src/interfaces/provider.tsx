@@ -13,7 +13,8 @@ export interface IProvider {
     journey?: {
         start: IJourney,
         [key: string]: IJourney
-    };
+    },
+    doctorIds: number[]
 }
 
 export interface IEligibility {

@@ -18,6 +18,7 @@ export const Database: IDatabase = {
             "description": "Hemp seeds Thai soba noodles candy cane winter crunchy seaweed blueberry pops Southern Italian sweet potato black bean burrito green tea lime apricot instant pot dark chocolate green pepper",
             "category": "Clinic",
             "isMemberRequired": false,
+            "doctorIds": [],
             "sections": [
                 {
                     "component": "BannerSectionComponent",
@@ -46,6 +47,7 @@ export const Database: IDatabase = {
             "description": "Hemp seeds Thai soba noodles candy cane winter crunchy seaweed blueberry pops Southern Italian sweet potato black bean burrito green tea lime apricot instant pot dark chocolate green pepper",
             "category": "Insurer",
             "isMemberRequired": true,
+            "doctorIds": [],
             "sections": [
                 {
                     "component": "ConsultNowComponent",
@@ -124,6 +126,7 @@ export const Database: IDatabase = {
             "description": "Morning smoothie bowl tofu soy milk lentils dessert raspberry fizz naga viper main course Thai basil curry blueberry chia seed jam leek bento box.",
             "category": "Insurer",
             "isMemberRequired": false,
+            "doctorIds": [],
             "sections": [
                 {
                     "component": "BannerSectionComponent",
@@ -198,6 +201,7 @@ export const Database: IDatabase = {
             "logoUrl": "logo-aetna.png",
             "category": "Insurer",
             "isMemberRequired": true,
+            "doctorIds": [],
             "sections": [
                 {
                     "component": "BannerSectionComponent",
@@ -245,6 +249,7 @@ export const Database: IDatabase = {
             "description": "Delightful blueberry scones quinoa flatbread couscous cozy butternut green pepper cool off garlic sriracha noodles grapefruit peanut butter crunch spicy miso dressing hearts of palm summer fruit salad.",
             "logoUrl": "logo-allianz.png",
             "isMemberRequired": true,
+            "doctorIds": [],
             "category": "Insurer",
             "sections": [
                 {
@@ -271,6 +276,7 @@ export const Database: IDatabase = {
             "description": "Hazelnut shiitake mediterranean roasted brussel sprouts hummus falafel bowl bite sized heat couscous cherry bomb cherries Thai curry mangos basil hearts of palm cinnamon mediterranean vegetables shiitake mushrooms lychee.",
             "logoUrl": "logo-prudential.png",
             "isMemberRequired": true,
+            "doctorIds": [],
             "category": "Insurer",
             "sections": [
                 {
@@ -301,6 +307,7 @@ export const Database: IDatabase = {
             "description": "Italian linguine puttanesca Thai super chili burritos summer fruit salad enchiladas farro platter winter quinoa flatbread basmati banana bread simmer peaches.",
             "logoUrl": "logo-nutriwell.png",
             "isMemberRequired": false,
+            "doctorIds": [],
             "category": "Clinic",
             "sections": [
                 {
@@ -327,6 +334,7 @@ export const Database: IDatabase = {
             "description": "Arugula salad red pepper coconut chili pepper cocoa lime ginger lemongrass agave green tea paprika elderberry vegan eating together tahini drizzle portobello mushrooms entree pesto figs double dark chocolate avocado blackberries with Mexican fiesta.",
             "logoUrl": "logo-dtap.png",
             "isMemberRequired": false,
+            "doctorIds": [],
             "category": "Clinic",
             "sections": [
                 {
@@ -353,6 +361,7 @@ export const Database: IDatabase = {
             "description": "Veggie burgers smoky maple tempeh glaze samosa Italian pepperoncini Caribbean red habanero plums tabasco pepper ginger carrot spiced juice cherry lingonberry appetizer sweet potato.",
             "logoUrl": "logo-raffles-medical-group.png",
             "isMemberRequired": true,
+            "doctorIds": [],
             "category": "Clinic",
             "sections": [
                 {
@@ -379,6 +388,7 @@ export const Database: IDatabase = {
             "description": "Balsamic vinaigrette green onions macadamia nut cookies cremini mushrooms cherry bomb pepper green papaya salad crunchy chai tea crispy iceberg lettuce.",
             "logoUrl": "logo-mount-elizabeth.png",
             "isMemberRequired": true,
+            "doctorIds": [],
             "category": "Specialist",
             "sections": [
                 {
@@ -409,6 +419,7 @@ export const Database: IDatabase = {
             "description": "Chinese five-spice powder red amazon pepper lemon maple orange tempeh dark and stormy cinnamon toast thyme grapefruit.",
             "logoUrl": "logo-guardian.png",
             "isMemberRequired": false,
+            "doctorIds": [],
             "category": "Pharmacy",
             "sections": [
                 {
@@ -435,6 +446,7 @@ export const Database: IDatabase = {
             "description": "Almond milk avocado dressing drizzle black beans banana lavender lemonade oranges tasty crispy seitan cool cucumbers.",
             "logoUrl": "logo-watsons.png",
             "isMemberRequired": false,
+            "doctorIds": [],
             "category": "Pharmacy",
             "sections": [
                 {
@@ -461,6 +473,7 @@ export const Database: IDatabase = {
             "description": "Kung pao pepper green pepper springtime strawberry hemp seeds bruschetta tahini drizzle red amazon pepper potato fig arugula cashew salad artichoke hearts cool cucumbers blackberries raspberry fizz dragon fruit portobello mushrooms.",
             "logoUrl": "logo-mental-health.png",
             "isMemberRequired": true,
+            "doctorIds": [],
             "category": "Specialist",
             "sections": [],
             "journey": {
@@ -516,6 +529,7 @@ export const Database: IDatabase = {
             "description": "Peanut butter cozy cinnamon oatmeal lemon lime minty winter Bulgarian carrot sweet potato black bean burrito lemon red lentil soup red curry tofu noodles crispy spicy.",
             "logoUrl": "logo-womens-health.png",
             "isMemberRequired": true,
+            "doctorIds": [],
             "category": "Specialist",
             "sections": [],
             "journey": {
@@ -572,6 +586,7 @@ export const Database: IDatabase = {
             "description": "Hemp seeds Thai soba noodles candy cane winter crunchy seaweed blueberry pops Southern Italian sweet potato black bean burrito green tea lime apricot instant pot dark chocolate green pepper",
             "category": "Clinic",
             "isMemberRequired": false,
+            "doctorIds": [],
             "sections": [
                 {
                     "component": "BannerSectionComponent",
@@ -600,6 +615,7 @@ export const Database: IDatabase = {
             "description": "Hemp seeds Thai soba noodles candy cane winter crunchy seaweed blueberry pops Southern Italian sweet potato black bean burrito green tea lime apricot instant pot dark chocolate green pepper",
             "category": "Clinic",
             "isMemberRequired": false,
+            "doctorIds": [],
             "sections": [],
             "journey": {
                 "start": {
@@ -652,6 +668,7 @@ export const Database: IDatabase = {
             "description": "Hemp seeds Thai soba noodles candy cane winter crunchy seaweed blueberry pops Southern Italian sweet potato black bean burrito green tea lime apricot instant pot dark chocolate green pepper",
             "category": "Clinic",
             "isMemberRequired": false,
+            "doctorIds": [],
             "sections": [],
             "journey": {
                 "start": {
@@ -685,6 +702,7 @@ export const Database: IDatabase = {
             "description": "Arugula salad sweet potato delightful blueberry scones chai tea Caribbean red habanero chilies hummus falafel bowl coconut salty cilantro bruschetta",
             "category": "Clinic",
             "isMemberRequired": false,
+            "doctorIds": [],
             "sections": [],
             "journey": {
                 "start": {
@@ -737,6 +755,7 @@ export const Database: IDatabase = {
             "description": "Fig arugula cashew salad almond milk guacamole lemon picnic salad macadamia nut cookies seeds dessert smoky maple tempeh glaze street style Thai basil tacos summer fruit salad",
             "category": "Clinic",
             "isMemberRequired": false,
+            "doctorIds": [],
             "sections": [],
             "journey": {
                 "start": {

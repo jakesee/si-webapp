@@ -2,7 +2,8 @@ import React, { useContext, useState } from "react"
 import styled from "styled-components";
 import { DataContext } from "../../context/DataContext";
 import { PageButton } from "../../page/mydoc/Page.styled";
-import { FormNav } from "../Form.styles";
+import { FormNav, FormTitle } from "../Form.styles";
+import { FormProps } from "./Form";
 
 
 const Wrapper = styled.div`
@@ -21,34 +22,27 @@ const Wrapper = styled.div`
     }
 
     .question {
+        font-size: 1.4em;
         margin-bottom: 20px;
     }
 `
 
 
-export interface FormSymptomsProps {
-    onBack?: (e: any, step: number) => void;
-    onNext: (e: any, step: number, data: any) => void;
-    step: number;
-}
-
-export const FormSymptoms = ({ step, onNext, onBack = undefined }: FormSymptomsProps) => {
+export const FormSymptoms = ({ journey, onNext, onBack = undefined }: FormProps) => {
 
     const { theme } = useContext(DataContext);
     let [symptoms, setSymptoms] = useState("");
     let [duration, setDuration] = useState("");
 
     const next = (e: any) => {
-        let data = { symptoms: symptoms, duration: duration }
-        onNext(e, step, data)
-    }
-
-    const back = (e: any) => {
-        onBack && onBack(e, step)
+        let triage = { symptoms: symptoms, duration: duration }
+        journey.setTriage(triage)
+        onNext(e)
     }
 
     return (
         <Wrapper>
+            <FormTitle>How can I help you?</FormTitle>
             <div className="question">
                 <div>What are your symptoms?</div>
                 <div><input type="text" value={symptoms} onChange={(e) => setSymptoms(e.target.value)} /></div>
@@ -58,7 +52,7 @@ export const FormSymptoms = ({ step, onNext, onBack = undefined }: FormSymptomsP
                 <div><input type="text" value={duration} onChange={(e) => setDuration(e.target.value)}/></div>
             </div>
             <FormNav>
-                {onBack && <PageButton onClick={(e) => back(e)}>Back</PageButton>}
+                {onBack && <PageButton onClick={(e) => onBack(e)}>Back</PageButton>}
                 <PageButton theme={theme} color="primary" onClick={(e) => next(e)} className="right">Next</PageButton>
             </FormNav>
         </Wrapper>

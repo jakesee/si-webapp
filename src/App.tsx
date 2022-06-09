@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { Home } from './page/mydoc/Home';
 import { Clinics } from './page/mydoc/Clinics';
 import { Start } from './page/mydoc/Start';
@@ -17,9 +17,12 @@ import { ITheme } from './interfaces/ui';
 
 function App() {
 
-  const [data, setData] = useState<IDatabase>(Database);
+  let newData = Generator.populateRandomData(Database);
+
+  const [data, setData] = useState<IDatabase>(newData);
   const [session, setSession] = useState<IUser | null>(null);
-  const [theme, setTheme] = useState<ITheme>(Theme);
+  const [theme] = useState<ITheme>(Theme);
+
 
   return (
     <div className="App">

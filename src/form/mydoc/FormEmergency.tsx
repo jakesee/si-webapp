@@ -1,8 +1,9 @@
-import React, { useContext, useState } from "react"
+import React, { useContext } from "react"
 import styled from "styled-components";
 import { DataContext } from "../../context/DataContext";
 import { PageButton } from "../../page/mydoc/Page.styled";
-import { FormNav } from "../Form.styles";
+import { FormNav, FormTitle } from "../Form.styles";
+import { FormProps } from "./Form";
 
 
 const Wrapper = styled.div`
@@ -10,7 +11,6 @@ const Wrapper = styled.div`
 
     h1 {
         font-weight: bold;
-        font-size: 1.2em;
         margin-bottom: 20px;
     }
 
@@ -40,29 +40,22 @@ const Wrapper = styled.div`
     }
 `
 
-
-export interface FormEmergencyProps {
-    step: number;
-    onNext: (e: any, step: number, data: any) => void;
-    onBack?: (e: any, step: number) => void;
-}
-
-export const FormEmergency = ({ step, onNext, onBack = undefined }: FormEmergencyProps) => {
+export const FormEmergency = ({ journey, onNext, onBack = undefined }: FormProps) => {
 
     const {theme} = useContext(DataContext)
 
     const next = (e: any) => {
-        onNext(e, step, null)
+        onNext(e)
     }
 
     const back = (e: any) => {
-        onBack && onBack(e, step)
+        onBack && onBack(e)
     }
 
     return (
         <Wrapper>
+            <FormTitle>Not for Emergency</FormTitle>
             <div className="question">
-                <h1>Not for Emergency</h1>
                 <p>Video consultation is not available for symptoms that require immediate medical assistance.</p>
                 <p>If you are experiencing such symptoms please consider calling ambulance service or visiting the nearest hospital. Such symptoms include but are not limited to the following:</p>
                 <ul>

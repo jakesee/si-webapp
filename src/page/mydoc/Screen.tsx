@@ -20,16 +20,18 @@ const PageFooter = styled.div`
     min-height: 44px;
 
     display: flex;
+    align-items: center;
 
 `
 const PoweredBy = styled.div`
-    font-size: 0.8em;
     margin-left: auto;
 `
 
 const BackWrapper = styled.div`
     display: flex;
     align-items: center;
+
+    font-size: 1.4em;
 `
 
 export interface ScreenProps {

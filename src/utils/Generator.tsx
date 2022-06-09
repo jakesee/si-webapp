@@ -1,4 +1,3 @@
-import { Database } from "../context/Database";
 import { IDatabase } from "../interfaces/data";
 import { AppointmentStatus, MessageType, EpisodeStatus, EpisodeType, IAppointment, IMessage, IEpisode } from "../interfaces/episode";
 import { IProvider } from "../interfaces/provider";
@@ -81,14 +80,13 @@ export default class Generator {
     }
 
     public static populateRandomData(database: IDatabase): IDatabase {
-        const providers = Database.providers;
 
         const countPatients = this.random(5, 8);
-        const countDoctors = this.random(5, 10);
+        const countDoctors = this.random(20, 50);
         const countEpisodes = this.random(30, 60);
         const countAppointments = this.random(20, 50);
 
-        const patients = [], doctors = [], appointments = [], episodes = [];
+        const patients = [], doctors:IUser[] = [], appointments = [], episodes = [];
 
         // generate patients
         for (let i = 0; i < countPatients; i++) {
@@ -103,9 +101,16 @@ export default class Generator {
 
         // generate episodes
         for (let i = 0; i < countEpisodes; i++) {
-            let episode = this.randomEpisode(patients, doctors, providers);
+            let episode = this.randomEpisode(patients, doctors, database.providers);
             episodes.push(episode);
         }
+
+        // add doctors to providers
+        database.providers.forEach(provider => {
+            provider.doctorIds = provider.doctorIds.concat(this.any(doctors, this.random(5, 10)).map(doctor => doctor.id));
+            // remove duplicates
+            provider.doctorIds = provider.doctorIds.filter((value, index, self) => self.indexOf(value) == index);
+        })
 
         // generate appointments
         const min15 = 1000 * 60 * 15;
@@ -235,13 +240,34 @@ export default class Generator {
             "medications": Array(5).fill(0).map(i => this.anyone(RANDOM.nouns)).join(', '),
             "emergencyContact": String(this.random(10000000, 99999999)),
             "emergencyPerson": this.anyone(RANDOM.firstNames) + ' ' + this.anyone(RANDOM.lastNames),
-            "clinic": this.anyone(RANDOM.clinicNames),
-            "bio": `${this.anyone(RANDOM.sentences)} ${this.anyone(RANDOM.sentences)} ${this.anyone(RANDOM.sentences)}`,
-            "speciality": this.any(RANDOM.speciality, this.random(1, 3)),
             "role": role
         };
 
+        if (role == UserRole.doctor) {
+            user.clinic = this.anyone(RANDOM.clinicNames);
+            user.bio = `${this.anyone(RANDOM.sentences)} ${this.anyone(RANDOM.sentences)} ${this.anyone(RANDOM.sentences)}`;
+            user.speciality = this.any(RANDOM.speciality, this.random(1, 3));
+            user.availability = this.randomTimeslot(new Date(), new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), 15, 0.2)
+        }
+
         return user;
+    }
+
+    public static randomTimeslot(from: Date, to: Date, intervalMinutes: number, availableRate: number) {
+        let timeslots = [];
+        let intervalInMilliseconds = intervalMinutes * 60 * 1000;
+        let currentTime = from.getTime();
+        let lastStartTime = to.getTime() - intervalInMilliseconds;
+        while (currentTime < lastStartTime) {
+            if ((this.random(0, 10000) / 10000) <= availableRate) {
+                timeslots.push({
+                    start: new Date(currentTime),
+                    end: new Date(currentTime + intervalInMilliseconds)
+                })
+            }
+            currentTime += intervalInMilliseconds;
+        }
+        return timeslots;
     }
 
     public static randomEpisode(patients: IUser[], doctors: IUser[], providers: IProvider[]) {

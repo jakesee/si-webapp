@@ -11,29 +11,37 @@ export const GlobalStyles = createGlobalStyle`
     }
 
     html {
-        font-size: 12pt;
+        font-size: 62.5%;
+        background-color: #ffffff;
         font-family: "Univers Next Pro", sans-serif !important;
     }
 
     body {
-        background-color: #ffffff;
         font-size: 1em;
     }
 
-    h1 {
-        font-size: 1.6em;
+    div, span {
+        font-size: 1em;
     }
 
-    h2 {
+    p, li, button, input, option, select {
         font-size: 1.4em;
     }
 
+    h1 {
+        font-size: 2em;
+    }
+
+    h2 {
+        font-size: 1.8em;
+    }
+
     h3 {
-        font-size: 1.2em;
+        font-size: 1.6em;
     }
 
     h4 {
-        font-size: 1.0em;
+        font-size: 1.4em;
     }
 
 

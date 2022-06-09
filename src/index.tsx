@@ -14,11 +14,12 @@ const PhoneWrapper = styled.div`
   flex-direction: column;
 
   .system-tray {
-    font-size: 0.9em;
+    font-size: 1.2em;
     font-weight: bold;
+    padding: 5px;
+
     display: flex;
     align-items: center;
-    padding: 5px;
 
     .icons {
       margin-left: auto;
@@ -44,13 +45,13 @@ root.render(
   <React.StrictMode>
     <PhoneWrapper>
       <div className="system-tray">
-        <div>3:44pm</div>
-        <div className="icons">
+        <span>3:44pm</span>
+        <span className="icons">
           <SignalCellularAltIcon fontSize="small" />
           <NetworkWifi3BarIcon fontSize="small" />
           <Battery2BarIcon fontSize="small" />
           <MailOutlineIcon fontSize="small" />
-        </div>
+        </span>
       </div>
       <h1 className="app-title">Teleconsultation</h1>
       <div className="webview">

@@ -1,3 +1,5 @@
+import { ITimeslot } from "./timeslot";
+
 export interface IUser {
   id: number;
   username: string;
@@ -22,6 +24,7 @@ export interface IUser {
   clinic?: string,
   bio?: string,
   speciality?: string[],
+  availability?: ITimeslot[]
 
   role: UserRole
 }
@@ -59,6 +62,7 @@ export class User implements IUser {
   clinic?: string;
   bio?: string;
   speciality?: string[];
+  availability?: { start: Date, end: Date }[];
 
   constructor(template: IUser) {
     this.id = template.id;
@@ -85,6 +89,7 @@ export class User implements IUser {
     this.clinic = template.clinic;
     this.bio = template.bio;
     this.speciality = template.speciality;
+    this.availability = template.availability;
   }
 
   get name(): string {
