@@ -11,7 +11,7 @@ const DoctorCard = styled.div`
     margin-bottom: 10px;
 
     display: flex;
-    align-items: center;
+    align-items: start;
     gap: 20px;
 
     img {

@@ -1,24 +1,34 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Screen } from "./Screen";
-import { Stepper } from "../../component/stepper";
+import { Stepper } from "../../component/Stepper";
 import { FormSymptoms } from "../../form/mydoc/FormSymptoms";
 import { FormEmergency } from "../../form/mydoc/FormEmergency";
 import { PageTitle } from "./Page.styled";
 import { DataContext } from "../../context/DataContext";
 import { FormSelectTimeslot } from "../../form/mydoc/FormSelectTimeslot";
 import { FormSelectDoctor } from "../../form/mydoc/FormSelectDoctor";
-import { useJourney } from "../../hooks/useJourney";
+import { IJourneyState, useJourney } from "../../hooks/useJourney";
 
 export const Start = () => {
 
     let navigate = useNavigate();
-    let {theme, session} = useContext(DataContext);
+    let {theme, session, data } = useContext(DataContext);
 
     let TOTAL_STEPS = 4;
     let { groupId } = useParams();
     let [form, setForm] = useState(<></>)
-    let journey = useJourney(session!, parseInt(groupId!), TOTAL_STEPS)
+
+    const onFinished = (journeyState: IJourneyState) => {
+
+
+
+        console.log(journeyState.patient);
+        journey.setPatient(session!);
+        console.log(journeyState.patient);
+    }
+
+    let journey = useJourney(session!, parseInt(groupId!), TOTAL_STEPS, onFinished)
 
     useEffect(() => {
         switch (journey.step) {
@@ -36,6 +46,7 @@ export const Start = () => {
                 break;
         }
     }, [journey.step])
+
 
 
 

@@ -2,7 +2,6 @@ import styled from "styled-components";
 import { ITheme } from "../../interfaces/ui";
 
 export const PageTitle = styled.h1`
-    margin: 10px auto 10px auto;
     text-align: center;
     padding: 6px;
 `

@@ -5,23 +5,27 @@ import { IUser } from "../interfaces/user";
 
 export interface IJourneyState {
     patient: IUser,
-    setPatient: React.Dispatch<React.SetStateAction<IUser>>,
     groupId: number,
-    setGroupId: React.Dispatch<React.SetStateAction<number>>,
     doctor: IUser | undefined,
-    setDoctor: React.Dispatch<React.SetStateAction<IUser | undefined>>,
     timeslot: ITimeslot | undefined,
-    setTimeslot: React.Dispatch<React.SetStateAction<ITimeslot | undefined>>,
     episodeId: number | undefined,
-    setEpisodeId: React.Dispatch<React.SetStateAction<number | undefined>>,
-    triage: string,
-    setTriage: React.Dispatch<React.SetStateAction<any>>,
+    triage: any,
     step: number,
-    onNext: () => void,
-    onBack: () => void
 }
 
-export const useJourney = (user: IUser, _groupId: number, totalSteps: number): IJourneyState  => {
+export interface IJourneyHook extends IJourneyState {
+    setPatient: React.Dispatch<React.SetStateAction<IUser>>,
+    setGroupId: React.Dispatch<React.SetStateAction<number>>,
+    setDoctor: React.Dispatch<React.SetStateAction<IUser | undefined>>,
+    setTimeslot: React.Dispatch<React.SetStateAction<ITimeslot | undefined>>,
+    setEpisodeId: React.Dispatch<React.SetStateAction<number | undefined>>,
+    setTriage: React.Dispatch<React.SetStateAction<any>>,
+    onNext: () => void,
+    onBack: () => void,
+    onFinished: (journey: IJourneyState) => void
+}
+
+export const useJourney = (user: IUser, _groupId: number, totalSteps: number, onFinished: (journey: IJourneyState) => void): IJourneyHook  => {
 
     let [patient, setPatient] = useState(user);
     let [groupId, setGroupId] = useState(_groupId);
@@ -33,6 +37,9 @@ export const useJourney = (user: IUser, _groupId: number, totalSteps: number): I
 
     const onNext = () => {
         if (step + 1 < totalSteps) setStep(step + 1);
+        else onFinished({
+            patient, groupId, doctor, timeslot, episodeId, triage, step
+        })
     }
 
     const onBack = () => {
@@ -46,6 +53,6 @@ export const useJourney = (user: IUser, _groupId: number, totalSteps: number): I
         timeslot, setTimeslot,
         episodeId, setEpisodeId,
         triage, setTriage,
-        step, onNext, onBack
+        step, onNext, onBack, onFinished
     }
 }

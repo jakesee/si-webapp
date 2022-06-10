@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import React, { ReactNode } from "react";
 import styled from "styled-components";
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 
@@ -35,7 +35,7 @@ const BackWrapper = styled.div`
 `
 
 export interface ScreenProps {
-    children?: ReactElement | ReactElement[];
+    children?: ReactNode;
     onBack?: (e: any) => void;
     backLabel?: string;
 }

@@ -51,11 +51,11 @@ export const Home = () => {
                 <Grid>
                     <BigButton>
                         <img src={ChatHistoryIcon} />
-                        <PageLargeButton theme={theme} width="100%" onClick={() => navigate('/chat')}>Medical Records</PageLargeButton>
+                        <PageLargeButton theme={theme} width="100%" onClick={() => navigate('/appointments')}>Medical Records</PageLargeButton>
                     </BigButton>
                     <BigButton>
                         <img src={MedicalRecordsIcon} />
-                        <PageLargeButton theme={theme} width="100%" onClick={() => navigate('/records')}>Medical Helpdesk</PageLargeButton>
+                        <PageLargeButton theme={theme} width="100%" onClick={() => navigate('/chat')}>Medical Helpdesk</PageLargeButton>
                     </BigButton>
                 </Grid>
             </PageSection>

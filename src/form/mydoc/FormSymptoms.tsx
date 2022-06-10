@@ -17,12 +17,11 @@ const Wrapper = styled.div`
         border: none;
         border-bottom: 1px solid #000000;
         width: 100%;
-        padding: 10px;
+        padding: 3px 0 3px 0;
         outline: none;
     }
 
     .question {
-        font-size: 1.4em;
         margin-bottom: 20px;
     }
 `
@@ -31,25 +30,30 @@ const Wrapper = styled.div`
 export const FormSymptoms = ({ journey, onNext, onBack = undefined }: FormProps) => {
 
     const { theme } = useContext(DataContext);
-    let [symptoms, setSymptoms] = useState("");
-    let [duration, setDuration] = useState("");
+    let [symptoms, setSymptoms] = useState(journey.triage?.symptoms ?? "");
+    let [duration, setDuration] = useState(journey.triage?.duration ?? "");
+    let [animal, setAnimal] = useState(journey.triage?.animal ?? "");
 
     const next = (e: any) => {
-        let triage = { symptoms: symptoms, duration: duration }
+        let triage = { animal: animal, symptoms: symptoms, duration: duration }
         journey.setTriage(triage)
         onNext(e)
     }
 
     return (
         <Wrapper>
-            <FormTitle>How can I help you?</FormTitle>
+            <FormTitle>Medical Triage</FormTitle>
             <div className="question">
-                <div>What are your symptoms?</div>
-                <div><input type="text" value={symptoms} onChange={(e) => setSymptoms(e.target.value)} /></div>
+                <div><label>What kind of pet is it (e.g. type, species)?</label></div>
+                <div><input type="text" value={animal} onChange={(e) => setAnimal(e.target.value)} placeholder="Dog, Poodle" /></div>
             </div>
             <div className="question">
-                <div>How long did your symptoms last?</div>
-                <div><input type="text" value={duration} onChange={(e) => setDuration(e.target.value)}/></div>
+                <div><label>What are the symptoms?</label></div>
+                <div><input type="text" value={symptoms} onChange={(e) => setSymptoms(e.target.value)} placeholder="e.g. fatigue, hair loss, loss of appetite" /></div>
+            </div>
+            <div className="question">
+                <div><label>How long have the symptoms lasted?</label></div>
+                <div><input type="text" value={duration} onChange={(e) => setDuration(e.target.value)} placeholder="e.g. 2 days, 1 week"/></div>
             </div>
             <FormNav>
                 {onBack && <PageButton onClick={(e) => onBack(e)}>Back</PageButton>}

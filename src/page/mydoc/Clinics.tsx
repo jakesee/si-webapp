@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { PageSection, PageTitle } from "./Page.styled";
 import { DataContext } from "../../context/DataContext";
+import { FormTitle } from "../../form/Form.styles";
 
 const ClinicGrid = styled.ul`
     margin: 0;
@@ -29,9 +30,7 @@ export const Clinics = () => {
         <Screen onBack={(e) => navigate('/')} backLabel="Dashboard">
             <PageTitle>Clinics</PageTitle>
             <PageSection>
-                <p>Where do you want to go today?.</p>
-            </PageSection>
-            <PageSection>
+                <h2>Where do you want to go today?</h2>
                 <ClinicGrid>
                 {data.providers.map(clinic =>
                     <ClinicCell key={clinic.id} onClick={ (e) => navigate(`/start/${clinic.id}`)}>

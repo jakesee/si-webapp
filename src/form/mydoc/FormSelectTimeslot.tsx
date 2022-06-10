@@ -6,6 +6,10 @@ import { PageButton } from "../../page/mydoc/Page.styled";
 import { DataContext } from "../../context/DataContext";
 import { ITheme } from "../../interfaces/ui";
 import { format } from "date-fns";
+import groupBy from "lodash/groupBy";
+import { CollapsiblePanel } from "../../component/CollapsiblePanel";
+import { ITimeslot } from "../../interfaces/timeslot";
+
 
 const DoctorCard = styled.div`
     margin-bottom: 10px;
@@ -62,7 +66,18 @@ export const FormSelectTimeslot = ({ journey, onNext, onBack = undefined }: Form
 
     let { theme } = useContext(DataContext);
 
-    let [timeslot, setTimeslot] = useState(0);
+    // track selections
+    let earliest = journey.timeslot ?? (journey.doctor?.availability && journey.doctor.availability.length > 0 ? journey.doctor.availability[0] : undefined);
+    let [timeslot, setTimeslot] = useState(earliest);
+    let [expandedId, setExpandedId] = useState(0);
+
+    let timeslots = journey.doctor!.availability!;
+    let groupedTimeslots = groupBy(timeslots, (t) => format(t.start, "dd MMM yyyy, EEEE"));
+
+    const onSelectTimeslot = (e: any, timeslot: ITimeslot) => {
+        journey.setTimeslot(timeslot);
+        onNext(e)
+    }
 
     return (
         <FormWrapper>
@@ -76,14 +91,19 @@ export const FormSelectTimeslot = ({ journey, onNext, onBack = undefined }: Form
                 </div>
             </DoctorCard>
             <DoctorBio>{journey.doctor?.bio}</DoctorBio>
-            <Timetable theme={theme}>
-                {journey.doctor?.availability?.map((a, i) => (
-                    <li key={i} className={timeslot == i ? 'selected' : ''} onClick={(e) => setTimeslot(i) }>{format(a.start, "d MMM, HH:mm")}</li>
-                ))}
-            </Timetable>
+
+            {Object.keys(groupedTimeslots).map((date, i) => (
+                <CollapsiblePanel key={i} label={<p>{date}</p>} isCollapsed={i !== expandedId} onChange={(e, a) => !a.isCollapsing ? setExpandedId(i) : null }>
+                    <Timetable theme={theme}>
+                        {groupedTimeslots[date].map((t, i) => (
+                            <li key={i} className={timeslot === t ? 'selected' : ''} onClick={(e) => setTimeslot(t)}>{`${format(t.start, "HH:mm")} - ${format(t.end, "HH:mm")}`}</li>
+                        ))}
+                    </Timetable>
+                </CollapsiblePanel>
+            ))}
             <FormNav>
                 {onBack && <PageButton onClick={(e) => onBack(e)}>Back</PageButton>}
-                <PageButton theme={theme} color="primary" className="right">Next: {format(journey.doctor?.availability![timeslot].start!, "d MMM, HH:mm") }</PageButton>
+                {timeslot && <PageButton theme={theme} color="primary" className="right" onClick={(e) => onSelectTimeslot(e, timeslot!)}>Next: {format(timeslot.start.getTime(), "d MMM, HH:mm")}</PageButton>}
             </FormNav>
         </FormWrapper>
     )

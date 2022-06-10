@@ -45,7 +45,7 @@ export const Stepper = ({ totalSteps = 3, currentStep = 0, activeColor = "lightb
     const getDots = () => {
         let dots = [];
         for (let i = 0; i < totalSteps; i++) {
-            dots.push(<li key={i} className={i == currentStep ? 'current' : ''}>&nbsp;</li>)
+            dots.push(<li key={i} className={i === currentStep ? 'current' : ''}>&nbsp;</li>)
         }
         return dots;
     }

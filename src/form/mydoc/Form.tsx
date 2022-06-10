@@ -1,7 +1,7 @@
-import { IJourneyState } from "../../hooks/useJourney";
+import { IJourneyHook } from "../../hooks/useJourney";
 
 export interface FormProps {
-    journey: IJourneyState;
+    journey: IJourneyHook;
     onNext: (e: any) => void;
     onBack?: (e: any) => void;
 }
