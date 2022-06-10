@@ -28,10 +28,11 @@ const PoweredBy = styled.div`
 `
 
 const BackWrapper = styled.div`
+    font-size: 1.4em;
+    cursor: pointer;
+
     display: flex;
     align-items: center;
-
-    font-size: 1.4em;
 `
 
 export interface ScreenProps {

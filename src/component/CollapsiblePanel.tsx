@@ -1,4 +1,4 @@
-import React, { ReactElement, ReactNode, useState } from "react";
+import React, { ReactNode } from "react";
 import styled from "styled-components";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
@@ -12,6 +12,7 @@ const Wrapper = styled.div`
         padding: 10px;
         border-radius: 5px;
         border: 1px solid #cccccc;
+        cursor: pointer;
 
         display: flex;
         align-items: center;

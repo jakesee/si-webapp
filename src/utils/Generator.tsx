@@ -83,8 +83,7 @@ export default class Generator {
 
         const countPatients = this.random(5, 8);
         const countDoctors = this.random(20, 50);
-        const countEpisodes = this.random(30, 60);
-        const countAppointments = this.random(20, 50);
+        const countEpisodes = this.random(15, 30);
 
         const patients = [], doctors:IUser[] = [], appointments = [], episodes = [];
 
@@ -103,6 +102,16 @@ export default class Generator {
         for (let i = 0; i < countEpisodes; i++) {
             let episode = this.randomEpisode(patients, doctors, database.providers);
             episodes.push(episode);
+
+            // generate appointments
+            const min15 = 1000 * 60 * 15;
+            const hour1 = min15 * 4;
+            let appointment = this.randomAppointment();
+            var milliseconds = Date.now() + hour1 * 2 - (Math.random() * min15 * i);
+            appointment.episodeId = episode.id;
+            appointment.startAt = new Date(milliseconds);
+            appointment.endAt = new Date(milliseconds + min15);
+            appointments.push(appointment);
         }
 
         // add doctors to providers
@@ -112,16 +121,7 @@ export default class Generator {
             provider.doctorIds = provider.doctorIds.filter((value, index, self) => self.indexOf(value) == index);
         })
 
-        // generate appointments
-        const min15 = 1000 * 60 * 15;
-        const hour1 = min15 * 4;
-        for (let i = 0; i < countAppointments; i++) {
-            let appointment = this.randomAppointment(episodes);
-            var milliseconds = Date.now() + hour1 * 2 - (Math.random() * min15 * i);
-            appointment.startAt = new Date(milliseconds);
-            appointment.endAt = new Date(milliseconds + min15);
-            appointments.push(appointment);
-        }
+        
 
         // fix one doctor and patient so that we can use it to login
         doctors[0].username = 'doctor';
@@ -310,11 +310,10 @@ export default class Generator {
         return messsages;
     }
 
-    public static randomAppointment(episodes: IEpisode[]) {
-
+    public static randomAppointment() {
         let appointment: IAppointment = {
             "id": this.random(10000, 99999),
-            "episodeId": this.anyone(episodes).id,
+            "episodeId": 0,
             "startAt": new Date(),
             "endAt": new Date(),
             "status": this.random(1, 5) as AppointmentStatus,

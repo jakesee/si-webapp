@@ -49,6 +49,7 @@ const Timetable = styled.div <{theme: ITheme}>`
     li {
         display: inline-block;
         padding: 3px 6px;
+        cursor: pointer;
 
         background: ${props => props.theme.button_secondary_background_color };
         margin: 5px;
