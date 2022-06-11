@@ -5,7 +5,7 @@ import { IUser } from "../interfaces/user";
 import { ITheme } from "../interfaces/ui";
 
 
-export interface IDataContext {
+export interface IAppContext {
     data: IDatabase;
     theme: ITheme;
     session: IUser | null;
@@ -13,6 +13,6 @@ export interface IDataContext {
     setData: React.Dispatch<React.SetStateAction<IDatabase>>;
 }
 
-export const DataContext = createContext<IDataContext>({ data: Database, theme: Theme, session: null, setSession: () => { }, setData: () => { } });
+export const AppContext = createContext<IAppContext>({ data: Database, theme: Theme, session: null, setSession: () => { }, setData: () => { } });
 
 

@@ -1,14 +1,13 @@
 import React, { useContext, useState } from "react";
-import { FormProps } from "./Form";
 import styled from "styled-components";
-import { FormNav, FormTitle, FormWrapper } from "../Form.styles";
-import { PageButton } from "../../page/mydoc/Page.styled";
-import { DataContext } from "../../context/DataContext";
-import { ITheme } from "../../interfaces/ui";
+import { FormButtonNav, FormTitle, FormProps, FormButton, Section } from "../../common";
+import { AppContext } from "../../../context/AppContext";
+import { ITheme } from "../../../interfaces/ui";
 import { format } from "date-fns";
 import groupBy from "lodash/groupBy";
-import { CollapsiblePanel } from "../../component/CollapsiblePanel";
-import { ITimeslot } from "../../interfaces/timeslot";
+import { CollapsiblePanel } from "../../control/CollapsiblePanel";
+import { ITimeslot } from "../../../interfaces/timeslot";
+import { IUser } from "../../../interfaces/user";
 
 
 const DoctorCard = styled.div`
@@ -62,36 +61,37 @@ const Timetable = styled.div <{theme: ITheme}>`
     }
 `
 
-export const FormSelectTimeslot = ({ journey, onNext, onBack = undefined }: FormProps) => {
+export const FormSelectTimeslot = ({ input, defaultValue, onNext, onBack = undefined }: FormProps<IUser, ITimeslot>) => {
 
 
-    let { theme } = useContext(DataContext);
+    let { theme, data } = useContext(AppContext);
+
+    const getEarliestAvailability = () => {
+        let doctorId = input!.id;
+        let availability = data.users.find(u => u.id === doctorId)?.availability;
+        return (availability && availability.length > 0) ? availability[0] : undefined;
+    }
 
     // track selections
-    let earliest = journey.timeslot ?? (journey.doctor?.availability && journey.doctor.availability.length > 0 ? journey.doctor.availability[0] : undefined);
+    let earliest = defaultValue ?? getEarliestAvailability();
     let [timeslot, setTimeslot] = useState(earliest);
     let [expandedId, setExpandedId] = useState(0);
 
-    let timeslots = journey.doctor!.availability!;
+    let timeslots = input!.availability!;
     let groupedTimeslots = groupBy(timeslots, (t) => format(t.start, "dd MMM yyyy, EEEE"));
 
-    const onSelectTimeslot = (e: any, timeslot: ITimeslot) => {
-        journey.setTimeslot(timeslot);
-        onNext(e)
-    }
-
     return (
-        <FormWrapper>
+        <Section>
             <FormTitle>Select Timeslot</FormTitle>
-            <DoctorCard key={journey.doctor?.id}>
-                <img src={`${journey.doctor?.imgUrl}`} />
+            <DoctorCard key={input?.id}>
+                <img src={`${input?.imgUrl}`} />
                 <div>
-                    <div className="name">{`${journey.doctor?.firstName} ${journey.doctor?.lastName}`}</div>
-                    <div className="specialty">{journey.doctor?.speciality?.reduce((prev, curr) => `${prev}, ${curr}`)}</div>
-                    <div className="clinic">{journey.doctor?.clinic}</div>
+                    <div className="name">{`${input?.firstName} ${input?.lastName}`}</div>
+                    <div className="specialty">{input?.speciality?.reduce((prev, curr) => `${prev}, ${curr}`)}</div>
+                    <div className="clinic">{input?.clinic}</div>
                 </div>
             </DoctorCard>
-            <DoctorBio>{journey.doctor?.bio}</DoctorBio>
+            <DoctorBio>{input?.bio}</DoctorBio>
 
             {Object.keys(groupedTimeslots).map((date, i) => (
                 <CollapsiblePanel key={i} label={<p>{date}</p>} isCollapsed={i !== expandedId} onChange={(e, a) => !a.isCollapsing ? setExpandedId(i) : null }>
@@ -102,10 +102,10 @@ export const FormSelectTimeslot = ({ journey, onNext, onBack = undefined }: Form
                     </Timetable>
                 </CollapsiblePanel>
             ))}
-            <FormNav>
-                {onBack && <PageButton onClick={(e) => onBack(e)}>Back</PageButton>}
-                {timeslot && <PageButton theme={theme} color="primary" className="right" onClick={(e) => onSelectTimeslot(e, timeslot!)}>Next: {format(timeslot.start.getTime(), "d MMM, HH:mm")}</PageButton>}
-            </FormNav>
-        </FormWrapper>
+            <FormButtonNav>
+                {onBack && <FormButton onClick={(e) => onBack(e)}>Back</FormButton>}
+                {timeslot && <FormButton theme={theme} color="primary" className="right" onClick={(e) => onNext(e, timeslot!)}>Next: {format(timeslot.start.getTime(), "d MMM, HH:mm")}</FormButton>}
+            </FormButtonNav>
+        </Section>
     )
 }

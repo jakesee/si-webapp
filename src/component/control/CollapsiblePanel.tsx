@@ -31,6 +31,7 @@ const Wrapper = styled.div`
     .contents {
         border: 1px solid #cccccc;
         border-top: none;
+        padding: 10px;
     }
 `
 

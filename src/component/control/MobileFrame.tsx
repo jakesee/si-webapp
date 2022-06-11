@@ -15,7 +15,7 @@ const PageBody = styled.div`
 
 const PageFooter = styled.div`
     margin-top: auto;
-    padding: 10px;
+    padding: 20px 10px 10px 10px;
     flex: 0 0 auto;
     min-height: 44px;
 
@@ -35,13 +35,13 @@ const BackWrapper = styled.div`
     align-items: center;
 `
 
-export interface ScreenProps {
+export interface MobileFrameProps {
     children?: ReactNode;
     onBack?: (e: any) => void;
     backLabel?: string;
 }
 
-export const Screen = ({ children = undefined, onBack = undefined, backLabel = "Back" }: ScreenProps) => {
+export const MobileFrame = ({ children = undefined, onBack = undefined, backLabel = "Back" }: MobileFrameProps) => {
 
     return (
         <PageWrapper>

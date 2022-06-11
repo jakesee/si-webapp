@@ -1,10 +1,9 @@
 import React, { useContext } from "react";
-import { FormProps } from "./Form";
 import styled from "styled-components";
-import { FormNav, FormTitle, FormWrapper } from "../Form.styles";
-import { PageButton } from "../../page/mydoc/Page.styled";
-import { DataContext } from "../../context/DataContext";
-import { IUser } from "../../interfaces/user";
+import { FormButtonNav, FormTitle, FormButton, FormProps, Section } from "../../common";
+import { AppContext } from "../../../context/AppContext";
+import { IUser } from "../../../interfaces/user";
+import { IProvider } from "../../../interfaces/provider";
 
 
 const DoctorCard = styled.div`
@@ -34,18 +33,12 @@ const DoctorCard = styled.div`
     }
 `
 
-export const FormSelectDoctor = ({ journey, onNext, onBack = undefined }: FormProps) => {
+export const FormSelectDoctor = ({ input, defaultValue, onNext, onBack = undefined }: FormProps<IProvider, IUser>) => {
 
-    let { data } = useContext(DataContext);
-
-    const onSelectDoctor = (e: any, doctor: IUser) => {
-
-        journey.setDoctor(doctor);
-        journey.onNext();
-    }
+    let { data } = useContext(AppContext);
 
     const renderDoctors = () => {
-        let doctors = data.providers.find(p => p.id === journey.groupId)?.doctorIds.map(doctorId => data.users.find(u => u.id === doctorId))
+        let doctors = data.providers.find(p => p.id === input!.id)?.doctorIds.map(doctorId => data.users.find(u => u.id === doctorId))
         let element = doctors?.map(doctor => (
             <DoctorCard key={doctor?.id}>
                 <img src={`${doctor?.imgUrl}`} />
@@ -54,19 +47,19 @@ export const FormSelectDoctor = ({ journey, onNext, onBack = undefined }: FormPr
                     <div className="specialty">{doctor?.speciality?.reduce((prev, curr) => `${prev}, ${curr}`)}</div>
                     <div className="clinic">{ doctor?.clinic}</div>
                 </div>
-                <div className="right"><PageButton onClick={(e) => onSelectDoctor(e, doctor!)}>Select</PageButton></div>
+                <div className="right"><FormButton onClick={(e) => onNext(e, doctor!)}>Select</FormButton></div>
             </DoctorCard>
         ))
         return element ?? <></>
     };
 
     return <>
-        <FormWrapper>
+        <Section>
             <FormTitle>Choose a Doctor</FormTitle>
             {renderDoctors()}
-            <FormNav>
-                {onBack && <PageButton onClick={(e) => onBack(e)}>Back</PageButton>}
-            </FormNav>
-        </FormWrapper>
+            <FormButtonNav>
+                {onBack && <FormButton onClick={(e) => onBack(e)}>Back</FormButton>}
+            </FormButtonNav>
+        </Section>
     </>
 }

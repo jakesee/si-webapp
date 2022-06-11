@@ -1,20 +1,21 @@
 import React, { useState } from 'react';
-import { Home } from './page/mydoc/Home';
-import { Clinics } from './page/mydoc/Clinics';
-import { Start } from './page/mydoc/Start';
+import { Home } from './component/page/mydoc/Home';
+import { FormClinic } from './component/form/mydoc/FormClinic';
+import { Start } from './component/page/mydoc/Start';
 import { GlobalStyles } from './GlobalStyles';
 import {
   BrowserRouter,
   Routes,
   Route,
 } from "react-router-dom";
-import { DataContext } from './context/DataContext';
+import { AppContext } from './context/AppContext';
 import Generator from './utils/Generator';
 import { IUser, UserRole } from './interfaces/user';
 import { IDatabase } from './interfaces/data';
 import { Database, Theme } from './context/Database';
 import { ITheme } from './interfaces/ui';
-import { Appointments } from './page/mydoc/Appointments';
+import { Appointments } from './component/page/mydoc/Appointments';
+import { WaitingRoom } from './component/page/mydoc/WaitingRoom';
 
 function App() {
 
@@ -28,18 +29,17 @@ function App() {
   return (
     <div className="App">
       <GlobalStyles />
-      <DataContext.Provider value={{ data, theme, setData, session, setSession }}>
+      <AppContext.Provider value={{ data, theme, setData, session, setSession }}>
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route path="/clinics" element={<Clinics />} />
               <Route path="/appointments" element={<Appointments />} />
-              <Route path="/start/:groupId" element={<Start />} />
+              <Route path="/waiting-room" element={<WaitingRoom />} />
+              <Route path="/start" element={<Start />} />
               <Route index element={<Home />} />
             </Routes>
           </BrowserRouter>
-      </DataContext.Provider>
-
+      </AppContext.Provider>
     </div>
   );
 }

@@ -1,11 +1,11 @@
 import React, { useContext } from "react";
-import { Screen } from "./Screen"
+import { MobileFrame } from "../../control/MobileFrame"
 import styled from "styled-components";
-import ChatHistoryIcon from "../../asset/mydoc/icon_chathistory.svg";
-import MedicalRecordsIcon from "../../asset/mydoc/icon_medicalrecords.svg";
+import ChatHistoryIcon from "../../../asset/mydoc/icon_chathistory.svg";
+import MedicalRecordsIcon from "../../../asset/mydoc/icon_medicalrecords.svg";
 import { useNavigate } from "react-router-dom";
-import { DataContext } from "../../context/DataContext";
-import { PageLargeButton, PageSection, PageTitle } from "./Page.styled";
+import { AppContext } from "../../../context/AppContext";
+import { WideButton, Section, PageTitle } from "../../common";
 
 
 const Grid = styled.div`
@@ -30,35 +30,36 @@ const BigButton = styled.div`
 export const Home = () => {
 
     const navigate = useNavigate()
-    const { theme } = useContext(DataContext)
+    const { theme } = useContext(AppContext)
 
     return (
-        <Screen>
+        <MobileFrame>
             <PageTitle>Dashboard</PageTitle>
-            <PageSection>
+            <Section>
                 <p>Manage all your video consultations here.</p>
-            </PageSection>
-            <PageSection style={{ marginBottom: "30px" }}>
-                <PageLargeButton theme={theme} color="primary" width="100%" onClick={() => navigate('/clinics')}>Consult with a doctor</PageLargeButton>
-            </PageSection>
-            <PageSection style={{ marginBottom: "30px" }}>
+            </Section>
+            <Section style={{ marginBottom: "30px" }}>
+                <WideButton theme={theme} color="primary" width="100%" onClick={() => navigate('/start')}>Consult with a doctor</WideButton>
+                <WideButton theme={theme} color="primary" width="100%" onClick={() => navigate('/start')}>Consult with a doctor</WideButton>
+            </Section>
+            <Section style={{ marginBottom: "30px" }}>
                 <p>Video consultation opening hours:</p>
                 <p style={{ color: "#888888" }}>9:00AM - 6:30PM from Monday to Friday</p>
                 <p style={{ color: "#888888" }}>9:00AM - 12:30PM on Saturday (Closed on Sundays and public holidays)</p>
-            </PageSection>
-            <PageSection>
+            </Section>
+            <Section>
                 <p style={{marginBottom: "30px"}}>Find your consultation details</p>
                 <Grid>
                     <BigButton>
                         <img src={ChatHistoryIcon} />
-                        <PageLargeButton theme={theme} width="100%" onClick={() => navigate('/appointments')}>Medical Records</PageLargeButton>
+                        <WideButton theme={theme} width="100%" onClick={() => navigate('/appointments')}>Appointments</WideButton>
                     </BigButton>
                     <BigButton>
                         <img src={MedicalRecordsIcon} />
-                        <PageLargeButton theme={theme} width="100%" onClick={() => navigate('/chat')}>Medical Helpdesk</PageLargeButton>
+                        <WideButton theme={theme} width="100%" onClick={() => navigate('/chat')}>Medical Helpdesk</WideButton>
                     </BigButton>
                 </Grid>
-            </PageSection>
-        </Screen>
+            </Section>
+        </MobileFrame>
     )
 }

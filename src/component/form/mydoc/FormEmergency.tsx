@@ -1,61 +1,33 @@
 import React, { useContext } from "react"
 import styled from "styled-components";
-import { DataContext } from "../../context/DataContext";
-import { PageButton } from "../../page/mydoc/Page.styled";
-import { FormNav, FormTitle } from "../Form.styles";
-import { FormProps } from "./Form";
+import { AppContext } from "../../../context/AppContext";
+import { FormTitle, FormProps, FormButtonNav, FormButton, Section } from "../../common";
 
 
-const Wrapper = styled.div`
-    padding: 20px;
-
-    h1 {
-        font-weight: bold;
-        margin-bottom: 20px;
-    }
+const Question = styled.div`
+    margin-bottom: 20px;
 
     p {
         margin-bottom: 10px;
     }
 
-    ul { margin-left: 10px; }
-    ul li {
+    ul {
         margin-left: 10px;
-    }
 
-    div {
-        margin-bottom: 10px;
-    }
-
-    input {
-        border: none;
-        border-bottom: 1px solid #000000;
-        width: 100%;
-        padding: 10px;
-        outline: none;
-    }
-
-    .question {
-        margin-bottom: 20px;
+        li {
+            margin-left: 10px;
+        }
     }
 `
 
-export const FormEmergency = ({ journey, onNext, onBack = undefined }: FormProps) => {
+export const FormEmergency = ({ onNext, onBack = undefined }: FormProps<void, void>) => {
 
-    const {theme} = useContext(DataContext)
-
-    const next = (e: any) => {
-        onNext(e)
-    }
-
-    const back = (e: any) => {
-        onBack && onBack(e)
-    }
+    const {theme} = useContext(AppContext)
 
     return (
-        <Wrapper>
+        <Section>
             <FormTitle>Not for Emergency</FormTitle>
-            <div className="question">
+            <Question>
                 <p>Video consultation is not available for symptoms that require immediate medical assistance.</p>
                 <p>If you are experiencing such symptoms please consider calling ambulance service or visiting the nearest hospital. Such symptoms include but are not limited to the following:</p>
                 <ul>
@@ -72,11 +44,11 @@ export const FormEmergency = ({ journey, onNext, onBack = undefined }: FormProps
                     <li>Sudden dizziness, weakness or change in vision</li>
                     <li>Suicidal or homicidal thoughts</li>
                 </ul>
-            </div>
-            <FormNav>
-                {onBack && <PageButton onClick={(e) => back(e)}>Back</PageButton>}
-                <PageButton theme={theme} color="primary" onClick={(e) => next(e)} className="right">Next</PageButton>
-            </FormNav>
-        </Wrapper>
+            </Question>
+            <FormButtonNav>
+                {onBack && <FormButton onClick={(e) => onBack(e)}>Back</FormButton>}
+                <FormButton theme={theme} color="primary" onClick={(e) => onNext(e)} className="right">I agree</FormButton>
+            </FormButtonNav>
+        </Section>
     )
 }
