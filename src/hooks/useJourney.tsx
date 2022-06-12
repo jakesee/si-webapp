@@ -1,9 +1,13 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { AppContext } from "../context/AppContext";
+import { AppointmentStatus, EpisodeStatus, EpisodeType, IAppointment, IEpisode, IMessage, MessageType } from "../interfaces/episode";
 import { ITimeslot } from "../interfaces/timeslot";
 import { IUser } from "../interfaces/user";
+import Generator from "../utils/Generator";
 
+export type Dictionary<T> = { [key: string]: T }
 
-export interface IJourneyState<T> {
+export interface IJourneyState<T extends Dictionary<string>> {
     patient: IUser,
     groupId: number | undefined,
     doctor: IUser | undefined,
@@ -14,7 +18,7 @@ export interface IJourneyState<T> {
     step: number,
 }
 
-export interface IJourneyHook<T> extends IJourneyState<T> {
+export interface IJourneyHook<T extends Dictionary<string>> extends IJourneyState<T> {
     setPatient: React.Dispatch<React.SetStateAction<IUser>>,
     setGroupId: React.Dispatch<React.SetStateAction<number | undefined>>,
     setDoctor: React.Dispatch<React.SetStateAction<IUser | undefined>>,
@@ -24,10 +28,14 @@ export interface IJourneyHook<T> extends IJourneyState<T> {
     setAppointmentId: React.Dispatch<React.SetStateAction<number | undefined>>,
     onNext: () => void,
     onBack: () => void,
-    onFinished: (journey: IJourneyState<T>) => void
+    submit: () => void,
 }
 
-export const useJourney = <T,>(user: IUser, totalSteps: number, onFinished: (journey: IJourneyState<T>) => void): IJourneyHook<T>  => {
+
+
+export const useJourney = <T extends Dictionary<string>,>(user: IUser, totalSteps: number): IJourneyHook<T>  => {
+
+    let { data, setData } = useContext(AppContext);
 
     let [step, setStep] = useState(0);
     let [patient, setPatient] = useState(user);
@@ -40,13 +48,47 @@ export const useJourney = <T,>(user: IUser, totalSteps: number, onFinished: (jou
 
     const onNext = () => {
         if (step + 1 < totalSteps) setStep(step + 1);
-        else onFinished({
-            patient, groupId, doctor, timeslot, episodeId, step, triage, appointmentId
-        })
     }
 
     const onBack = () => {
         if (step > 0) setStep(step - 1);
+    }
+
+    const submit = () => {
+
+        console.log("submitting");
+
+        let message: IMessage = {
+            userId: patient.id,
+            message: Object.keys(triage!).map((key) => `${key}: ${triage && triage[key]}`).reduce((prev, next) => `${prev}; ${next}`),
+            datetime: new Date(),
+            type: MessageType.Message
+        }
+        let newEpisode: IEpisode = {
+            id: Generator.random(10000, 99999),
+            providerId: groupId!,
+            participants: [patient, doctor!],
+            messages: [message],
+            status: EpisodeStatus.Opened,
+            type: EpisodeType.Diary
+        }
+        let newAppoinment: IAppointment = {
+            id: Generator.random(10000, 99999),
+            episodeId: newEpisode.id,
+            startAt: timeslot!.start,
+            endAt: timeslot!.end,
+            status: AppointmentStatus.Accepted
+        }
+
+        setData(data => {
+            let episodes = [ ...data.episodes, newEpisode ]
+            let appointments = [ ...data.appointments, newAppoinment ]
+            return { ...data, episodes, appointments };
+        });
+        setAppointmentId(newAppoinment.id);
+        setEpisodeId(newEpisode.id);
+
+        console.log("appt id:", newAppoinment.id, "episode id:", newEpisode.id);
     }
 
     return {
@@ -57,6 +99,6 @@ export const useJourney = <T,>(user: IUser, totalSteps: number, onFinished: (jou
         episodeId, setEpisodeId,
         triage, setTriage,
         appointmentId, setAppointmentId,
-        step, onNext, onBack, onFinished
+        step, onNext, onBack, submit
     }
 }

@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 
 
 export interface ISubscriber {
@@ -9,6 +9,9 @@ export interface ISubscriber {
 export const usePubSub = () => {
 
     let subscribers = useRef<ISubscriber[]>([]);
+
+
+    let [state, setState] = useState(0);
 
     const publish = (event: string, e: any) => {
         subscribers.current.forEach(sub => {
@@ -21,5 +24,5 @@ export const usePubSub = () => {
         subscribers.current.push({ event: event, handler: handler });
     }
 
-    return { publish, subscribe };
+    return { publish, subscribe, state, setState };
 }

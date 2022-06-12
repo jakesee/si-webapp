@@ -1,20 +1,21 @@
 import { createGlobalStyle } from "styled-components";
+import { ITheme } from "./interfaces/ui";
 
-export const GlobalStyles = createGlobalStyle`
+export const GlobalStyles = createGlobalStyle<{theme: ITheme}>`
 
     :root {
+        font-size: 62.5%;
+        background-color: #ffffff;
+        font-family: ${props => props.theme.font_family };
+    }
 
+    :root, #root, body {
+        height: 100%
     }
 
     * {
         padding: 0; margin: 0;
         box-sizing: border-box;
-    }
-
-    html {
-        font-size: 62.5%;
-        background-color: #ffffff;
-        font-family: "Prompt", "Univers Next Pro", sans-serif !important;
     }
 
     body {
@@ -26,7 +27,7 @@ export const GlobalStyles = createGlobalStyle`
     }
 
     p, li, button, input, option, select, label {
-        font-family: "Prompt", "Univers Next Pro", sans-serif !important;
+        font-family: ${props => props.theme.font_family };
         font-size: 1.4em;
     }
 

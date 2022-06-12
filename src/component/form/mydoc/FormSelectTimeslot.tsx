@@ -94,7 +94,7 @@ export const FormSelectTimeslot = ({ input, defaultValue, onNext, onBack = undef
             <DoctorBio>{input?.bio}</DoctorBio>
 
             {Object.keys(groupedTimeslots).map((date, i) => (
-                <CollapsiblePanel key={i} label={<p>{date}</p>} isCollapsed={i !== expandedId} onChange={(e, a) => !a.isCollapsing ? setExpandedId(i) : null }>
+                <CollapsiblePanel key={i} head={<p>{date}</p>} isCollapsed={i !== expandedId} onChange={(e, a) => !a.isCollapsing ? setExpandedId(i) : null }>
                     <Timetable theme={theme}>
                         {groupedTimeslots[date].map((t, i) => (
                             <li key={i} className={timeslot === t ? 'selected' : ''} onClick={(e) => setTimeslot(t)}>{`${format(t.start, "HH:mm")} - ${format(t.end, "HH:mm")}`}</li>

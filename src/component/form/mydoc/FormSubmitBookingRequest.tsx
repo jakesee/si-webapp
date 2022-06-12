@@ -39,10 +39,12 @@ export const FormSubmitBookingRequest = ({ input, onBack, onNext }: FormProps<{
             <h3>Appointment Booking Details</h3>
             <AppointmentInfo>
                 <table>
-                <tr><td>Specialisation</td><td>{ input?.provider.title}</td></tr>
-                <tr><td>Doctor</td><td>{`${input?.doctor.firstName} ${input?.doctor.lastName}` }</td></tr>
-                <tr><td>Clinic</td><td>{ input?.doctor.clinic }</td></tr>
-                <tr><td>Date/Time</td><td>{ format(input?.timeslot.start!, "d MMM yyyy, EEEE, hh:mm") }</td></tr>
+                    <tbody>
+                        <tr><td>Specialisation</td><td>{ input?.provider.title}</td></tr>
+                        <tr><td>Doctor</td><td>{`${input?.doctor.firstName} ${input?.doctor.lastName}` }</td></tr>
+                        <tr><td>Clinic</td><td>{ input?.doctor.clinic }</td></tr>
+                        <tr><td>Date/Time</td><td>{format(input?.timeslot.start!, "d MMM yyyy, EEEE, HH:mm")}</td></tr>
+                    </tbody>
                 </table>
             </AppointmentInfo>
             <InfoBox type="Info" title={<h3 style={{margin: 0}}>Before submitting your booking request:</h3>}>

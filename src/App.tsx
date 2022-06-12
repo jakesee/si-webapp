@@ -27,20 +27,18 @@ function App() {
   const [theme] = useState<ITheme>(Theme);
 
   return (
-    <div className="App">
-      <GlobalStyles />
-      <AppContext.Provider value={{ data, theme, setData, session, setSession }}>
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/appointments" element={<Appointments />} />
-              <Route path="/waiting-room" element={<WaitingRoom />} />
-              <Route path="/start" element={<Start />} />
-              <Route index element={<Home />} />
-            </Routes>
-          </BrowserRouter>
-      </AppContext.Provider>
-    </div>
+    <AppContext.Provider value={{ data, theme, setData, session, setSession }}>
+      <GlobalStyles theme={theme} />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/appointments" element={<Appointments />} />
+          <Route path="/waiting-room" element={<WaitingRoom />} />
+          <Route path="/start" element={<Start />} />
+          <Route index element={<Home />} />
+        </Routes>
+      </BrowserRouter>
+    </AppContext.Provider>
   );
 }
 

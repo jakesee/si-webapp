@@ -37,7 +37,7 @@ const Wrapper = styled.div`
 
 export interface CollapsiblePanelProps {
     isCollapsed: boolean
-    label?: ReactNode,
+    head?: ReactNode,
     children?: ReactNode,
     onChange?: (e: any, args: CollapsiblePanelEventArgs) => void
 }
@@ -46,7 +46,7 @@ export interface CollapsiblePanelEventArgs {
     isCollapsing: boolean
 }
 
-export const CollapsiblePanel = ({ isCollapsed = true, label = "", children = undefined, onChange = undefined }: CollapsiblePanelProps) => {
+export const CollapsiblePanel = ({ isCollapsed = true, head = "", children = undefined, onChange = undefined }: CollapsiblePanelProps) => {
 
 
     const onClick = (e: any) => {
@@ -59,7 +59,7 @@ export const CollapsiblePanel = ({ isCollapsed = true, label = "", children = un
     return (
         <Wrapper>
             <div className={isCollapsed ? "header collapsed" : "header expanded"} onClick={(e) => onClick(e)}>
-                <span>{label}</span>
+                <span>{head}</span>
                 {isCollapsed ? (<span className="right"><ExpandMoreIcon /></span>) : null }
                 {!isCollapsed ? (<span className="right"><ExpandLessIcon /></span>) : null }
             </div>

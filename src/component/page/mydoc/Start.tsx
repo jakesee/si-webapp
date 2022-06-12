@@ -22,11 +22,7 @@ export const Start = () => {
     let TOTAL_STEPS = 6;
     let [form, setForm] = useState(<></>)
 
-    const onFinished = (journeyState: IJourneyState<IFormTriageQuestions>) => {
-        journey.setPatient(session!);
-    }
-
-    let journey = useJourney<IFormTriageQuestions>(session!, TOTAL_STEPS, onFinished)
+    let journey = useJourney<IFormTriageQuestions>(session!, TOTAL_STEPS)
 
     const onTriageSubmit = (e: any, value: { animal: string, symptoms: string, duration: string }) => {
         journey.setTriage(value);
@@ -48,6 +44,8 @@ export const Start = () => {
     }
 
     const onConfirmBooking = (e: any) => {
+        journey.setPatient(session!);
+        journey.submit();
         navigate("/appointments");
     }
 

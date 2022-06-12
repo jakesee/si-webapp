@@ -21,7 +21,7 @@ const Question = styled.div`
     }
 `
 
-export interface IFormTriageQuestions {
+export type IFormTriageQuestions = {
     animal: string,
     symptoms: string,
     duration: string,

@@ -10,6 +10,7 @@ import Battery2BarIcon from '@mui/icons-material/Battery2Bar';
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
 
 const PhoneWrapper = styled.div`
+  height: 100%;
   display: flex;
   flex-direction: column;
 
@@ -32,11 +33,10 @@ const PhoneWrapper = styled.div`
     padding: 10px;
   }
 
-  .webview {
-    flex: 1 0 auto;
+  div.webview {
+    overflow: scroll;
   }
 `
-
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

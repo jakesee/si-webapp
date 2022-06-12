@@ -17,7 +17,7 @@ export const Section = styled.div`
 `
 
 export const WideButton = styled.button<{ theme: ITheme, color?: string, width?: string }>`
-    width: ${props => props.width ?? 'auto'};
+    width: ${props => props.width ?? '100%'};
     background-color: ${props => props.color === 'primary' ? props.theme.button_primary_background_color : props.theme.button_secondary_background_color};
     color: ${props => props.color === 'primary' ? props.theme.button_primary_foreground_color : props.theme.button_secondary_foreground_color};
     border: none;

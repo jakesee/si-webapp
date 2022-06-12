@@ -788,7 +788,7 @@ export const Theme: ITheme = {
     "button_primary_foreground_color": "#ffffff",
     "button_secondary_background_color": "#DEDFE0",
     "button_secondary_foreground_color": "rgb(51, 51, 51)",
-    "font_family": "",
+    "font_family": `"Prompt", "Univers Next Pro", sans-serif !important`,
     "color_background": "",
     "color_on_background": "",
     "color_surface": "",

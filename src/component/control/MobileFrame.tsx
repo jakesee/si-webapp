@@ -3,14 +3,14 @@ import styled from "styled-components";
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 
 const PageWrapper = styled.div`
-    /* height: ${window.innerHeight}px; */
+    flex: 1;
+
     display: flex;
     flex-direction: column;
-    flex: 1;
 `
 
 const PageBody = styled.div`
-    flex: 1;
+    flex: 1 0 auto;
 `
 
 const PageFooter = styled.div`
@@ -44,7 +44,7 @@ export interface MobileFrameProps {
 export const MobileFrame = ({ children = undefined, onBack = undefined, backLabel = "Back" }: MobileFrameProps) => {
 
     return (
-        <PageWrapper>
+        <PageWrapper id="mobile-frame">
             <PageBody>
                 { children }
             </PageBody>
