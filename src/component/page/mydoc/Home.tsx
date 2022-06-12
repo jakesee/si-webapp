@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { MobileFrame } from "../../control/MobileFrame"
+import { Page } from "../../control/Page"
 import styled from "styled-components";
 import ChatHistoryIcon from "../../../asset/mydoc/icon_chathistory.svg";
 import MedicalRecordsIcon from "../../../asset/mydoc/icon_medicalrecords.svg";
@@ -39,14 +39,14 @@ export const Home = () => {
     const upcomingAppointment = getUpcomingAppointment();
 
     return (
-        <MobileFrame>
+        <Page>
             <PageTitle>Dashboard</PageTitle>
             <Section>
                 <p>Manage all your video consultations here.</p>
             </Section>
             <Section style={{ marginBottom: "30px" }}>
                 {upcomingAppointment ?
-                    <WideButton theme={theme} color="primary" onClick={() => navigate('/waiting-room')}>Enter Waiting Room</WideButton> :
+                    <WideButton theme={theme} color="primary" onClick={() => navigate('/consultation-room')}>Enter Waiting Room</WideButton> :
                     <WideButton theme={theme} color="primary" onClick={() => navigate('/start')}>Consult with a doctor</WideButton>
                 }
             </Section>
@@ -68,6 +68,6 @@ export const Home = () => {
                     </BigButton>
                 </Grid>
             </Section>
-        </MobileFrame>
+        </Page>
     )
 }

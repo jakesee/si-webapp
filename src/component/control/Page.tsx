@@ -2,18 +2,20 @@ import React, { ReactNode } from "react";
 import styled from "styled-components";
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 
-const PageWrapper = styled.div`
-    flex: 1;
+const Wrapper = styled.div`
+    height: 100%;
 
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: auto;
+    grid-template-rows: 1fr min-content;
 `
 
-const PageBody = styled.div`
-    flex: 1 0 auto;
+const Body = styled.div < { isScrollable: boolean }>`
+    height: 100%;
+    ${ props => !props.isScrollable ? `overflow: hidden;` : null }
 `
 
-const PageFooter = styled.div`
+const Footer = styled.div`
     margin-top: auto;
     padding: 20px 10px 10px 10px;
     flex: 0 0 auto;
@@ -35,23 +37,24 @@ const BackWrapper = styled.div`
     align-items: center;
 `
 
-export interface MobileFrameProps {
+export interface PageProps {
     children?: ReactNode;
     onBack?: (e: any) => void;
     backLabel?: string;
+    isScrollable?: boolean;
 }
 
-export const MobileFrame = ({ children = undefined, onBack = undefined, backLabel = "Back" }: MobileFrameProps) => {
+export const Page = ({ children = undefined, onBack = undefined, backLabel = "Back", isScrollable = true }: PageProps) => {
 
     return (
-        <PageWrapper id="mobile-frame">
-            <PageBody>
+        <Wrapper id="mobile-frame">
+            <Body isScrollable={isScrollable}>
                 { children }
-            </PageBody>
-            <PageFooter>
+            </Body>
+            <Footer>
                 {onBack && (<BackWrapper onClick={(e) => onBack(e)}><ArrowBackIosNewIcon /> <span>{backLabel}</span></BackWrapper>) }
                 <PoweredBy>Powered by MyDoc</PoweredBy>
-            </PageFooter>
-        </PageWrapper>
+            </Footer>
+        </Wrapper>
     )
 }

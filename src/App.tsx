@@ -16,6 +16,7 @@ import { Database, Theme } from './context/Database';
 import { ITheme } from './interfaces/ui';
 import { Appointments } from './component/page/mydoc/Appointments';
 import { WaitingRoom } from './component/page/mydoc/WaitingRoom';
+import { ConsultationRoom } from './component/page/mydoc/ConsultationRoom';
 
 function App() {
 
@@ -34,6 +35,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/appointments" element={<Appointments />} />
           <Route path="/waiting-room" element={<WaitingRoom />} />
+          <Route path="/consultation-room" element={<ConsultationRoom />} />
           <Route path="/start" element={<Start />} />
           <Route index element={<Home />} />
         </Routes>

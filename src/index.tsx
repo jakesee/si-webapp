@@ -2,62 +2,16 @@ import React from 'react';
 import App from './App';
 import ReactDOM from 'react-dom/client';
 import reportWebVitals from './reportWebVitals';
-import styled from 'styled-components';
-
-import SignalCellularAltIcon from '@mui/icons-material/SignalCellularAlt';
-import NetworkWifi3BarIcon from '@mui/icons-material/NetworkWifi3Bar';
-import Battery2BarIcon from '@mui/icons-material/Battery2Bar';
-import MailOutlineIcon from '@mui/icons-material/MailOutline';
-
-const PhoneWrapper = styled.div`
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-
-  .system-tray {
-    font-size: 1.2em;
-    font-weight: bold;
-    padding: 5px;
-
-    display: flex;
-    align-items: center;
-
-    .icons {
-      margin-left: auto;
-    }
-  }
-
-  .app-title {
-    color: #ffffff;
-    background-color: #000000;
-    padding: 10px;
-  }
-
-  div.webview {
-    overflow: scroll;
-  }
-`
+import { Phone } from './component/control/Phone';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <PhoneWrapper>
-      <div className="system-tray">
-        <span>3:44pm</span>
-        <span className="icons">
-          <SignalCellularAltIcon fontSize="small" />
-          <NetworkWifi3BarIcon fontSize="small" />
-          <Battery2BarIcon fontSize="small" />
-          <MailOutlineIcon fontSize="small" />
-        </span>
-      </div>
-      <h1 className="app-title">Teleconsultation</h1>
-      <div className="webview">
-        <App />
-      </div>
-    </PhoneWrapper>
+    <Phone>
+      <App />
+    </Phone>
   </React.StrictMode>
 );
 

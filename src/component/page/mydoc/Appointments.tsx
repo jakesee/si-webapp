@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { CollapsiblePanel } from "../../control/CollapsiblePanel";
 import { AppContext } from "../../../context/AppContext";
-import { MobileFrame } from "../../control/MobileFrame";
+import { Page } from "../../control/Page";
 import { format } from "date-fns"
 import { Section as Section, PageTitle as PageTitle, FormButton } from "../../common";
 import groupBy from "lodash/groupBy";
@@ -48,7 +48,7 @@ export const Appointments = () => {
     let appointments = getAppointments();
 
     return (
-        <MobileFrame backLabel="Dashboard" onBack={(e) => navigate('/') }>
+        <Page backLabel="Dashboard" onBack={(e) => navigate('/') }>
             <PageTitle>Appointments</PageTitle>
             <Section>
                 {appointments.map((a, i) => (
@@ -79,6 +79,6 @@ export const Appointments = () => {
                     </CollapsiblePanel>
                 ))}
             </Section>
-        </MobileFrame>
+        </Page>
     )
 }

@@ -8,7 +8,7 @@ import { Appointment, AppointmentStatus, EpisodeStatus } from "../../../interfac
 import { UserRole } from "../../../interfaces/user";
 import { PageTitle, Section, WideButton } from "../../common";
 import { InfoBox } from "../../control/InfoBox";
-import { MobileFrame } from "../../control/MobileFrame";
+import { Page } from "../../control/Page";
 
 const AppointmentDetails = styled.div`
     font-size: 1.4em;
@@ -37,7 +37,7 @@ export const WaitingRoom = () => {
     const appointment = getUpcomingAppointment();
 
     return (
-        <MobileFrame onBack={(e) => navigate('/')} backLabel="Dashboard">
+        <Page onBack={(e) => navigate('/')} backLabel="Dashboard">
             <PageTitle>Waiting Room</PageTitle>
             {!appointment ? <p>There is no upcoming appointment.</p> :
             <Section>
@@ -66,6 +66,6 @@ export const WaitingRoom = () => {
                 <div><WideButton>Concierge Chat</WideButton></div>
                 </Section>
             }
-        </MobileFrame>
+        </Page>
     )
 }

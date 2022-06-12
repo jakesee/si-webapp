@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { MobileFrame } from "../../control/MobileFrame";
+import { Page } from "../../control/Page";
 import { Stepper } from "../../control/Stepper";
 import { PageTitle } from "../../common";
 import { AppContext } from "../../../context/AppContext";
@@ -109,10 +109,10 @@ export const Start = () => {
     }
 
     return (
-        <MobileFrame onBack={(e) => onBack(e)} backLabel="Cancel">
+        <Page onBack={(e) => onBack(e)} backLabel="Cancel">
             <PageTitle>Book Appointment</PageTitle>
             <Stepper totalSteps={TOTAL_STEPS} currentStep={journey.step} activeColor={theme.button_primary_background_color} inactiveColor={theme.button_secondary_background_color} />
             { form }
-        </MobileFrame>
+        </Page>
     )
 }
