@@ -16,6 +16,7 @@ const ClinicCell = styled.li`
     border: 1px solid #cccccc;
     padding: 10px;
     width: 100%;
+    cursor: pointer;
 `
 
 export const FormClinic = ({ onNext, onBack }: FormProps<void, number>) => {

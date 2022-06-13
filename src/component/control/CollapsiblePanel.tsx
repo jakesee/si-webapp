@@ -6,12 +6,11 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 const Wrapper = styled.div`
 
     margin-bottom: 10px;
-    transition: all 0.2s ease-out;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #cccccc;
 
     .header {
-        padding: 10px;
-        border-radius: 5px;
-        border: 1px solid #cccccc;
         cursor: pointer;
 
         display: flex;
@@ -21,18 +20,22 @@ const Wrapper = styled.div`
         }
     }
 
-    .header.collapsed {
-
-    }
-    .header.expanded {
-        border-bottom: none;
-        border-radius: 5px 5px 0 0;
-    }
     .contents {
-        border: 1px solid #cccccc;
-        border-top: none;
-        padding: 10px;
+        max-height: 600px;
+        margin-top: 10px;
+        transition: max-height 0.3s ease-out;
     }
+
+    &.collapsed {
+        padding: 10px 10px 0 10px;
+
+        .contents {
+            max-height: 0px;
+            transition: max-height 0.3s ease-out;
+            overflow: hidden;
+        }
+    }
+
 `
 
 export interface CollapsiblePanelProps {
@@ -57,13 +60,14 @@ export const CollapsiblePanel = ({ isCollapsed = true, head = "", children = und
     }
 
     return (
-        <Wrapper>
+        <Wrapper className={isCollapsed ? "collapsed" : "expanded" }>
             <div className={isCollapsed ? "header collapsed" : "header expanded"} onClick={(e) => onClick(e)}>
                 <span>{head}</span>
                 {isCollapsed ? (<span className="right"><ExpandMoreIcon /></span>) : null }
                 {!isCollapsed ? (<span className="right"><ExpandLessIcon /></span>) : null }
             </div>
-            {!isCollapsed ? (<div className="contents">{children}</div>) : null }
+            {/* {!isCollapsed ? (<div className="contents">{children}</div>) : null } */}
+            <div className="contents">{children}</div>
         </Wrapper>
     )
 }
