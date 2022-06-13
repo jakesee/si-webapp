@@ -11,6 +11,17 @@ export interface IAppConfig {
     sections: Array<ISection>;
 }
 
+export enum Language {
+    en,
+    vi,
+    th,
+    zh_CN,
+    zh_HK,
+    zh_Hant_TW,
+    es,
+    ms,
+}
+
 export interface ITheme {
     // body
     "font_family": string;

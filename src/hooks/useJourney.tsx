@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { AppContext } from "../context/AppContext";
+import { AppContext } from "../context/AppProvider";
 import { AppointmentStatus, EpisodeStatus, EpisodeType, IAppointment, IEpisode, IMessage, MessageType } from "../interfaces/episode";
 import { ITimeslot } from "../interfaces/timeslot";
 import { IUser } from "../interfaces/user";

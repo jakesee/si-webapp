@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import styled from "styled-components";
 import { FormButtonNav, FormTitle, FormProps, FormButton, Section } from "../../common";
-import { AppContext } from "../../../context/AppContext";
+import { AppContext } from "../../../context/AppProvider";
 import { ITheme } from "../../../interfaces/ui";
 import { format } from "date-fns";
 import groupBy from "lodash/groupBy";

@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import styled from "styled-components";
 import { Section, FormTitle, FormProps, FormButtonNav } from "../../common";
-import { AppContext } from "../../../context/AppContext";
+import { AppContext } from "../../../context/AppProvider";
 
 const ClinicGrid = styled.ul`
     margin: 0;

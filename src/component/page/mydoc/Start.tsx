@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { Page } from "../../control/Page";
 import { Stepper } from "../../control/Stepper";
-import { AppContext } from "../../../context/AppContext";
+import { AppContext } from "../../../context/AppProvider";
 import { FormTriage, IFormTriageQuestions } from "../../form/mydoc/FormTriage";
 import { FormEmergency } from "../../form/mydoc/FormEmergency";
 import { FormSelectTimeslot } from "../../form/mydoc/FormSelectTimeslot";
@@ -12,11 +12,13 @@ import { FormSubmitBookingRequest } from "../../form/mydoc/FormSubmitBookingRequ
 import { IUser } from "../../../interfaces/user";
 import { ITimeslot } from "../../../interfaces/timeslot";
 import { FormClinic } from "../../form/mydoc/FormClinic";
+import { AuthContext } from "../../../context/AuthProvider";
 
 export const Start = () => {
 
     let navigate = useNavigate();
-    let {theme, session, data } = useContext(AppContext);
+    const { session } = useContext(AuthContext);
+    let {theme, data } = useContext(AppContext);
 
     let TOTAL_STEPS = 6;
 

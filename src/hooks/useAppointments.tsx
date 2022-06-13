@@ -1,13 +1,15 @@
 import groupBy from "lodash/groupBy";
 import { useContext } from "react";
-import { AppContext } from "../context/AppContext";
+import { AppContext } from "../context/AppProvider";
+import { AuthContext } from "../context/AuthProvider";
 import { AppointmentStatus, EpisodeStatus } from "../interfaces/episode";
 import { UserRole } from "../interfaces/user";
 
 
 export const useAppointments = () => {
 
-    let { data, session } = useContext(AppContext);
+    const { session } = useContext(AuthContext);
+    let { data } = useContext(AppContext);
 
     const getAppointments = () => {
         let episodes = data.episodes.filter(e => e.participants.findIndex(p => p.id === session?.id) >= 0);
