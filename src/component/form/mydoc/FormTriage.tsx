@@ -25,17 +25,19 @@ export type IFormTriageQuestions = {
     animal: string,
     symptoms: string,
     duration: string,
+    other: string,
 }
 
-export const FormTriage = ({ defaultValue = {animal:"", symptoms:"", duration:""} , onNext, onBack = undefined }: FormProps<void, IFormTriageQuestions>) => {
+export const FormTriage = ({ defaultValue = { animal: "", symptoms: "", duration: "", other: ""} , onNext, onBack = undefined }: FormProps<void, IFormTriageQuestions>) => {
 
     const { theme } = useContext(AppContext);
     let [symptoms, setSymptoms] = useState(defaultValue.symptoms ?? "");
     let [duration, setDuration] = useState(defaultValue.duration ?? "");
     let [animal, setAnimal] = useState(defaultValue.animal ?? "");
+    let [other, setOther] = useState(defaultValue.other ?? "");
 
     const next = (e: any) => {
-        let value = { animal: animal, symptoms: symptoms, duration: duration }
+        let value = { animal, symptoms, duration, other }
         onNext(e, value);
     }
 
@@ -53,6 +55,10 @@ export const FormTriage = ({ defaultValue = {animal:"", symptoms:"", duration:""
             <Question>
                 <div><label>How long have the symptoms lasted?</label></div>
                 <div><input type="text" value={duration} onChange={(e) => setDuration(e.target.value)} placeholder="e.g. 2 days, 1 week"/></div>
+            </Question>
+            <Question>
+                <div><label>Any other requests for the doctor?</label></div>
+                <div><input type="text" value={other} onChange={(e) => setOther(e.target.value)} placeholder="e.g. I would like to..." /></div>
             </Question>
             <FormButtonNav>
                 {onBack && <FormButton onClick={(e) => onBack(e)}>Back</FormButton>}

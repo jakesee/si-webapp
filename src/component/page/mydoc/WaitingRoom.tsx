@@ -1,12 +1,9 @@
 import { format } from "date-fns";
-import React, { useContext } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { AppContext } from "../../../context/AppContext";
 import { useAppointments } from "../../../hooks/useAppointments";
-import { Appointment, AppointmentStatus, EpisodeStatus } from "../../../interfaces/episode";
-import { UserRole } from "../../../interfaces/user";
-import { PageTitle, Section, WideButton } from "../../common";
+import { Section, WideButton } from "../../common";
 import { InfoBox } from "../../control/InfoBox";
 import { Page } from "../../control/Page";
 
@@ -37,8 +34,7 @@ export const WaitingRoom = () => {
     const appointment = getUpcomingAppointment();
 
     return (
-        <Page onBack={(e) => navigate('/')} backLabel="Dashboard">
-            <PageTitle>Waiting Room</PageTitle>
+        <Page title="Waiting Room" onBack={(e) => navigate('/')} backLabel="Dashboard">
             {!appointment ? <p>There is no upcoming appointment.</p> :
             <Section>
                 <h3>Appointment Details</h3>

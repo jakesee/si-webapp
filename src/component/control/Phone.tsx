@@ -12,7 +12,7 @@ const Wrapper = styled.div`
 
   display: grid;
   grid-template-columns: auto;
-  grid-template-rows: min-content min-content 1fr;
+  grid-template-rows: min-content 1fr;
 
   .system-tray {
     font-size: 1.2em;
@@ -56,7 +56,7 @@ export const Phone = ({ children }: PhoneProps) => {
                     <MailOutlineIcon fontSize="small" />
                 </span>
             </div>
-            <h1 className="app-title">Teleconsultation</h1>
+            {/* <h1 className="app-title">Teleconsultation</h1> */}
             <div className="webview">
                 { children }
             </div>

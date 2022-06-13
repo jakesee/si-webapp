@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import { ITheme } from "../../interfaces/ui";
-import { IJourneyHook } from "../../hooks/useJourney";
 
 export const PageTitle = styled.h1`
     text-align: center;
@@ -26,8 +25,8 @@ export const WideButton = styled.button<{ theme: ITheme, color?: string, width?:
 `
 
 export const FormButton = styled.button<{ theme: ITheme, color?: string }>`
-    background-color: ${props => props.color == 'primary' ? props.theme.button_primary_background_color : props.theme.button_secondary_background_color};
-    color: ${props => props.color == 'primary' ? props.theme.button_primary_foreground_color : props.theme.button_secondary_foreground_color};
+    background-color: ${props => props.color === 'primary' ? props.theme.button_primary_background_color : props.theme.button_secondary_background_color};
+    color: ${props => props.color === 'primary' ? props.theme.button_primary_foreground_color : props.theme.button_secondary_foreground_color};
     border: none;
     padding: 6px 12px;
     border-radius: 3px;
@@ -42,6 +41,14 @@ export const FormButtonNav = styled.div`
     .right {
         margin-left: auto;
     }
+`
+
+export const ButtonIcon = styled.button`
+    width: 50px;
+    height: 50px;
+    border-radius: 50px;
+    padding: 0; margin: 0;
+    border: none;
 `
 
 export const FormTitle = styled.h2`

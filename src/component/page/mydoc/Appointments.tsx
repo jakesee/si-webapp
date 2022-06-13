@@ -5,14 +5,7 @@ import { CollapsiblePanel } from "../../control/CollapsiblePanel";
 import { AppContext } from "../../../context/AppContext";
 import { Page } from "../../control/Page";
 import { format } from "date-fns"
-import { Section as Section, PageTitle as PageTitle, FormButton } from "../../common";
-import groupBy from "lodash/groupBy";
-import { UserRole } from "../../../interfaces/user";
-import { AppointmentStatus, EpisodeStatus } from "../../../interfaces/episode";
-import { Spinner } from "../../control/Spinner";
-import { InfoBox } from "../../control/InfoBox";
-import { usePubSub } from "../../../hooks/usePubSub";
-import { ConstructionOutlined } from "@mui/icons-material";
+import { Section, FormButton } from "../../common";
 import { useAppointments } from "../../../hooks/useAppointments";
 
 
@@ -48,14 +41,13 @@ export const Appointments = () => {
     let appointments = getAppointments();
 
     return (
-        <Page backLabel="Dashboard" onBack={(e) => navigate('/') }>
-            <PageTitle>Appointments</PageTitle>
+        <Page title="Appointments" backLabel="Dashboard" onBack={(e) => navigate('/') }>
             <Section>
                 {appointments.map((a, i) => (
                     <CollapsiblePanel key={i} isCollapsed={i !== expandedId} onChange={(e, args) => setExpandedId(i)} head={
                         <AppointmentCardHead>
                             <span>{`${format(a.startAt, "dd MMM yyyy, HH:mm")}`}</span>
-                            {a.status === "Confirmed" && (<FormButton theme={theme} color="primary" onClick={ () => navigate('/waiting-room') }>Enter Waiting Room</FormButton>)}
+                            {a.status === "Confirmed" && (<FormButton theme={theme} color="primary" onClick={ () => navigate('/consultation-room') }>Enter Waiting Room</FormButton>)}
                         </AppointmentCardHead>
                     }>
                         <h3>Appointment Details</h3>

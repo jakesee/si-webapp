@@ -1,13 +1,14 @@
 import React, { ReactNode } from "react";
 import styled from "styled-components";
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import { PageTitle } from "../common";
 
 const Wrapper = styled.div`
     height: 100%;
 
     display: grid;
     grid-template-columns: auto;
-    grid-template-rows: 1fr min-content;
+    grid-template-rows: min-content 1fr min-content;
 `
 
 const Body = styled.div < { isScrollable: boolean }>`
@@ -38,16 +39,18 @@ const BackWrapper = styled.div`
 `
 
 export interface PageProps {
-    children?: ReactNode;
-    onBack?: (e: any) => void;
-    backLabel?: string;
-    isScrollable?: boolean;
+    children?: ReactNode,
+    title?: string,
+    onBack?: (e: any) => void,
+    backLabel?: string,
+    isScrollable?: boolean,
 }
 
-export const Page = ({ children = undefined, onBack = undefined, backLabel = "Back", isScrollable = true }: PageProps) => {
+export const Page = ({ title = "", children = undefined, onBack = undefined, backLabel = "Back", isScrollable = true }: PageProps) => {
 
     return (
-        <Wrapper id="mobile-frame">
+        <Wrapper id="page">
+            <PageTitle>{title}</PageTitle>
             <Body isScrollable={isScrollable}>
                 { children }
             </Body>

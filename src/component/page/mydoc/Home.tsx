@@ -5,9 +5,7 @@ import ChatHistoryIcon from "../../../asset/mydoc/icon_chathistory.svg";
 import MedicalRecordsIcon from "../../../asset/mydoc/icon_medicalrecords.svg";
 import { useNavigate } from "react-router-dom";
 import { AppContext } from "../../../context/AppContext";
-import { WideButton, Section, PageTitle } from "../../common";
-import { useJourney } from "../../../hooks/useJourney";
-import { usePubSub } from "../../../hooks/usePubSub";
+import { WideButton, Section } from "../../common";
 import { useAppointments } from "../../../hooks/useAppointments";
 
 
@@ -39,14 +37,13 @@ export const Home = () => {
     const upcomingAppointment = getUpcomingAppointment();
 
     return (
-        <Page>
-            <PageTitle>Dashboard</PageTitle>
+        <Page title="Dashboard">
             <Section>
                 <p>Manage all your video consultations here.</p>
             </Section>
             <Section style={{ marginBottom: "30px" }}>
                 {upcomingAppointment ?
-                    <WideButton theme={theme} color="primary" onClick={() => navigate('/consultation-room')}>Enter Waiting Room</WideButton> :
+                    <WideButton theme={theme} color="primary" onClick={() => navigate('/consultation-room')}>Enter Consultation Room</WideButton> :
                     <WideButton theme={theme} color="primary" onClick={() => navigate('/start')}>Consult with a doctor</WideButton>
                 }
             </Section>
@@ -59,12 +56,12 @@ export const Home = () => {
                 <p style={{marginBottom: "30px"}}>Find your consultation details</p>
                 <Grid>
                     <BigButton>
-                        <img src={ChatHistoryIcon} />
+                        <img src={ChatHistoryIcon} alt="Appointments" />
                         <WideButton theme={theme} onClick={() => navigate('/appointments')}>Appointments</WideButton>
                     </BigButton>
                     <BigButton>
-                        <img src={MedicalRecordsIcon} />
-                        <WideButton theme={theme} onClick={() => navigate('/chat')}>Medical Helpdesk</WideButton>
+                        <img src={MedicalRecordsIcon} alt="Concierge" />
+                        <WideButton theme={theme} onClick={() => navigate('/concierge')}>Medical Helpdesk</WideButton>
                     </BigButton>
                 </Grid>
             </Section>

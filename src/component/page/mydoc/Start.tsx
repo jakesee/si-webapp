@@ -1,14 +1,13 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Page } from "../../control/Page";
 import { Stepper } from "../../control/Stepper";
-import { PageTitle } from "../../common";
 import { AppContext } from "../../../context/AppContext";
 import { FormTriage, IFormTriageQuestions } from "../../form/mydoc/FormTriage";
 import { FormEmergency } from "../../form/mydoc/FormEmergency";
 import { FormSelectTimeslot } from "../../form/mydoc/FormSelectTimeslot";
 import { FormSelectDoctor } from "../../form/mydoc/FormSelectDoctor";
-import { IJourneyState, useJourney } from "../../../hooks/useJourney";
+import { useJourney } from "../../../hooks/useJourney";
 import { FormSubmitBookingRequest } from "../../form/mydoc/FormSubmitBookingRequest";
 import { IUser } from "../../../interfaces/user";
 import { ITimeslot } from "../../../interfaces/timeslot";
@@ -24,37 +23,39 @@ export const Start = () => {
 
     let journey = useJourney<IFormTriageQuestions>(session!, TOTAL_STEPS)
 
-    const onTriageSubmit = (e: any, value: { animal: string, symptoms: string, duration: string }) => {
-        journey.setTriage(value);
-        journey.onNext();
-    }
 
-    const onDoctorChosen = (e: any, value: IUser) => {
-        if (journey.doctor?.id !== value.id) {
-            journey.setDoctor(value)
-            journey.setTimeslot(undefined);
-        }
-
-        journey.onNext();
-    }
-
-    const onTimeslotChosen = (e: any, value: ITimeslot) => {
-        journey.setTimeslot(value)
-        journey.onNext();
-    }
-
-    const onConfirmBooking = (e: any) => {
-        journey.setPatient(session!);
-        journey.submit();
-        navigate("/appointments");
-    }
-
-    const onClinicSubmit = (e: any, groupId: number) => {
-        journey.setGroupId(groupId);
-        journey.onNext();
-    }
 
     useEffect(() => {
+        const onTriageSubmit = (e: any, value: IFormTriageQuestions) => {
+            journey.setTriage(value);
+            journey.onNext();
+        }
+
+        const onDoctorChosen = (e: any, value: IUser) => {
+            if (journey.doctor?.id !== value.id) {
+                journey.setDoctor(value)
+                journey.setTimeslot(undefined);
+            }
+
+            journey.onNext();
+        }
+
+        const onTimeslotChosen = (e: any, value: ITimeslot) => {
+            journey.setTimeslot(value)
+            journey.onNext();
+        }
+
+        const onConfirmBooking = (e: any) => {
+            journey.setPatient(session!);
+            journey.submit();
+            navigate("/appointments");
+        }
+
+        const onClinicSubmit = (e: any, groupId: number) => {
+            journey.setGroupId(groupId);
+            journey.onNext();
+        }
+
         switch (journey.step) {
             case 1:
                 setForm(<FormEmergency
@@ -65,7 +66,12 @@ export const Start = () => {
             case 2:
                 setForm(
                     <FormTriage
-                        defaultValue={{ animal: journey.triage?.animal ?? "", symptoms: journey.triage?.symptoms ?? "", duration: journey.triage?.duration ?? "" }}
+                        defaultValue={{
+                            animal: journey.triage?.animal ?? "",
+                            symptoms: journey.triage?.symptoms ?? "",
+                            duration: journey.triage?.duration ?? "",
+                            other: journey.triage?.other ?? "",
+                        }}
                         onBack={(e) => journey.onBack()}
                         onNext={(e, value) => onTriageSubmit(e, value)}
                     />
@@ -101,7 +107,7 @@ export const Start = () => {
                 setForm(<FormClinic onNext={(e, value) => onClinicSubmit(e, value)} />);
                 break;
         }
-    }, [journey.step])
+    }, [journey.step, data.providers, journey, navigate, session])
 
 
     const onBack = (e: any) => {
@@ -109,8 +115,7 @@ export const Start = () => {
     }
 
     return (
-        <Page onBack={(e) => onBack(e)} backLabel="Cancel">
-            <PageTitle>Book Appointment</PageTitle>
+        <Page title="Book Appointment" onBack={(e) => onBack(e)} backLabel="Cancel">
             <Stepper totalSteps={TOTAL_STEPS} currentStep={journey.step} activeColor={theme.button_primary_background_color} inactiveColor={theme.button_secondary_background_color} />
             { form }
         </Page>
