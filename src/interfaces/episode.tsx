@@ -17,14 +17,14 @@ export interface IMessage {
 }
 
 export enum EpisodeStatus {
-    Opened = 'Opened',
-    Closed = 'Closed'
+    Opened = 'open',
+    Closed = 'close'
 }
 
 export enum EpisodeType {
-    BotConvo = 1, // - Bot to Patient(default episode for each patient)
-    CallCentre = 2, // - Concierge to Patient
-    Diary = 3, // Patient to Professional
+    BotConvo = 'botconvo', // - Bot to Patient(default episode for each patient)
+    CallCentre = 'callcenter', // - Concierge to Patient
+    Diary = 'diary', // Patient to Professional
     Group = 4, // concierge to Professional
     HealthScreening = 5, // - Healthscreening episode to Patient
     PeerToPeer = 6, // - Professional to Professional

@@ -3,17 +3,19 @@ import { useNavigate } from "react-router-dom";
 import { Page } from "../../control/Page";
 
 import { format } from "date-fns";
-import { AppContext } from "../../../context/AppContext";
+import { AppContext } from "../../../context/AppProvider";
 import { ChatControl } from "../../control/ChatControl";
 import { EpisodeType, IMessage } from "../../../interfaces/episode";
 import { ChatBubble, ChatBubblePortrait } from "../../control/ChatBubble";
+import { AuthContext } from "../../../context/AuthProvider";
 
 
 export const Concierge = () => {
 
     const navigate = useNavigate();
 
-    const { theme, data, session } = useContext(AppContext);
+    const { session } = useContext(AuthContext);
+    const { theme, data } = useContext(AppContext);
 
     let userEpisodes = data.episodes.filter(e => e.type === EpisodeType.CallCentre && e.participants.map(p => p.id).includes(session!.id));
     userEpisodes = userEpisodes.sort((a, b) => b.id - a.id);

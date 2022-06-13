@@ -6,11 +6,12 @@ import { InfoBox } from "../../control/InfoBox";
 import { Page } from "../../control/Page";
 
 import { format } from "date-fns";
-import { AppContext } from "../../../context/AppContext";
+import { AppContext } from "../../../context/AppProvider";
 import { Dialog } from "../../control/Dialog";
 import { ChatControl } from "../../control/ChatControl";
 import { IMessage } from "../../../interfaces/episode";
 import { ChatBubble, ChatBubblePortrait } from "../../control/ChatBubble";
+import { AuthContext } from "../../../context/AuthProvider";
 
 
 
@@ -38,7 +39,8 @@ export const ConsultationRoom = () => {
 
     const navigate = useNavigate();
 
-    const { theme, data, session } = useContext(AppContext);
+    const { session } = useContext(AuthContext);
+    const { theme, data } = useContext(AppContext);
 
     const { getUpcomingAppointment } = useAppointments();
     const [showVideoNotReadyDialog, setShowVideoNotReadyDialog] = useState(false);

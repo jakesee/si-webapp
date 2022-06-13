@@ -1,6 +1,6 @@
 import React, { useContext } from "react"
 import styled from "styled-components";
-import { AppContext } from "../../../context/AppContext";
+import { AppContext } from "../../../context/AppProvider";
 import { FormTitle, FormProps, FormButtonNav, FormButton, Section } from "../../common";
 
 

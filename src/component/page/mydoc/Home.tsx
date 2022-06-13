@@ -4,9 +4,13 @@ import styled from "styled-components";
 import ChatHistoryIcon from "../../../asset/mydoc/icon_chathistory.svg";
 import MedicalRecordsIcon from "../../../asset/mydoc/icon_medicalrecords.svg";
 import { useNavigate } from "react-router-dom";
-import { AppContext } from "../../../context/AppContext";
+import { AppContext } from "../../../context/AppProvider";
 import { WideButton, Section } from "../../common";
 import { useAppointments } from "../../../hooks/useAppointments";
+import http from "../../../http";
+import { useDashboard } from "../../../hooks/useDashboard";
+import { AuthContext } from "../../../context/AuthProvider";
+import { Loader } from "../../control/Spinner";
 
 
 const Grid = styled.div`
@@ -31,18 +35,22 @@ const BigButton = styled.div`
 export const Home = () => {
 
     const navigate = useNavigate();
+    const { accessToken } = useContext(AuthContext);
     const { theme } = useContext(AppContext);
-    const { getUpcomingAppointment } = useAppointments();
 
-    const upcomingAppointment = getUpcomingAppointment();
+    // const { getUpcomingAppointment } = useAppointments();
+    //const upcomingAppointment = getUpcomingAppointment();
+    let { isLoading, isError, activeDoctorEpisode, activeConciergeEpisode } = useDashboard(accessToken!);
+
 
     return (
         <Page title="Dashboard">
+            {isLoading && <Loader theme={theme}/>}
             <Section>
                 <p>Manage all your video consultations here.</p>
             </Section>
             <Section style={{ marginBottom: "30px" }}>
-                {upcomingAppointment ?
+                {activeDoctorEpisode ?
                     <WideButton theme={theme} color="primary" onClick={() => navigate('/consultation-room')}>Enter Consultation Room</WideButton> :
                     <WideButton theme={theme} color="primary" onClick={() => navigate('/start')}>Consult with a doctor</WideButton>
                 }

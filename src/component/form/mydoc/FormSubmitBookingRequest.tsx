@@ -1,7 +1,7 @@
 import { format } from "date-fns";
 import React, { useContext } from "react";
 import styled from "styled-components";
-import { AppContext } from "../../../context/AppContext";
+import { AppContext } from "../../../context/AppProvider";
 import { IProvider } from "../../../interfaces/provider";
 import { ITimeslot } from "../../../interfaces/timeslot";
 import { IUser } from "../../../interfaces/user";
