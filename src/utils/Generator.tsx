@@ -98,6 +98,13 @@ export default class Generator {
             doctors.push(doctor);
         }
 
+        // fix one doctor and patient so that we can use it to login
+        doctors[0].username = 'doctor';
+        doctors[0].password = 'doctor';
+        patients[0].id = 64329;
+        patients[0].username = 'patient';
+        patients[0].password = 'patient';
+
         // generate episodes
         for (let i = 0; i < countEpisodes; i++) {
             let episode = this.randomEpisode(patients, doctors, database.providers);
@@ -123,11 +130,7 @@ export default class Generator {
 
 
 
-        // fix one doctor and patient so that we can use it to login
-        doctors[0].username = 'doctor';
-        doctors[0].password = 'doctor';
-        patients[0].username = 'patient';
-        patients[0].password = 'patient';
+
 
         database.appointments.push(...appointments);
         database.users.push(...patients, ...doctors);

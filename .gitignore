@@ -22,10 +22,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 /server-config.json
-<<<<<<< HEAD
-/.env
-=======
->>>>>>> 9492542 (started integration with api backend)
 /.env.development
 /.env.production
 /.env

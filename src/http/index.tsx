@@ -20,28 +20,85 @@ const http = {
         }
     },
 
-    signIn(username: string, password: string) {
-        return Generator.any(Database.users.filter(u => u.role === UserRole.patient), 1)[0]
+    async signIn<T>(username: string, password: string) {
+        return Database.users.find(u => u.id === 64329);
     },
 
-    signOut() {
+    async signOut() {
         console.log(this.host_name);
     },
 
-    async getEpisodes(access_token: string) {
+    async getEpisodes<T>(access_token: string) {
 
         try {
-            let { data: response, status } = await axios.get(`${this.host_name}/api/v2/accounts/episodes`, {
-                headers: { Authorization: `Bearer ${access_token}` }
-            });
-            return response.data.episodes as IEpisode[];
+            const config = { headers: { Authorization: `Bearer ${access_token}` } };
+            let { data: response, status } = await axios.get(`${this.host_name}/api/v2/accounts/episodes`, config);
+            return response.data.episodes as T[];
         } catch (error) {
             this._logError(error);
         }
     },
 
+    async getEpisode<T>(access_token: string, episodeId: number) {
 
-    getUserProfile() { }
+        try {
+            const config = { headers: { Authorization: `Bearer ${access_token}` } };
+            let { data: response, status } = await axios.get(`${this.host_name}/api/v2/accounts/episodes/${episodeId}`, config);
+            return response.data.episodes as T;
+        } catch (error) {
+            this._logError(error);
+        }
+    },
+
+    async getUser<T>(access_token: string, userId: number) {
+        try {
+            const config = { headers: { Authorization: `Bearer ${access_token}` } };
+            let { data: response, status } = await axios.get(`${this.host_name}/api/v2/accounts/${userId}`, config);
+            return response.data as T;
+        } catch (error) {
+            this._logError(error);
+        }
+    },
+
+    async getAppointments<T>(access_token: string, userId: number) {
+        try {
+            const config = { headers: { Authorization: `Bearer ${access_token}` } };
+            let { data: response, status } = await axios.get(`${this.host_name}/api/v2/accounts/${userId}/appointments`, config);
+            return response.data as T[];
+        } catch (error) {
+            this._logError(error);
+        }
+    },
+
+    async getDoctors<T>(access_token: string, groupId: number) {
+        try {
+            const config = { headers: { Authorization: `Bearer ${access_token}` } };
+            let { data: response, status } = await axios.get(`${this.host_name}/api/v2/groups/${groupId}/doctors?page=1`, config);
+            return response.data as T[];
+        } catch (error) {
+            this._logError(error);
+        }
+    },
+
+    async getDoctorTimeslots<T>(access_token: string, groupId: number, doctorId: number) {
+        try {
+            const config = { headers: { Authorization: `Bearer ${access_token}` } };
+            let { data: response, status } = await axios.get(`${this.host_name}/api/v2/groups/${groupId}/rostered?accountId=${doctorId}&slots=true`, config);
+            return response.data as T[];
+        } catch (error) {
+            this._logError(error);
+        }
+    },
+
+    async getEarliestTimeslots<T>(access_token: string, groupId: number) {
+        try {
+            const config = { headers: { Authorization: `Bearer ${access_token}` } };
+            let { data: response, status } = await axios.get(`${this.host_name}/api/v2/groups/${groupId}/availableProfessional`, config);
+            return response.data as T[];
+        } catch (error) {
+            this._logError(error);
+        }
+    },
 }
 
 export default http;

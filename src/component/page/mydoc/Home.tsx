@@ -35,12 +35,11 @@ const BigButton = styled.div`
 export const Home = () => {
 
     const navigate = useNavigate();
-    const { accessToken } = useContext(AuthContext);
     const { theme } = useContext(AppContext);
 
     // const { getUpcomingAppointment } = useAppointments();
     //const upcomingAppointment = getUpcomingAppointment();
-    let { isLoading, isError, activeDoctorEpisode, activeConciergeEpisode } = useDashboard(accessToken!);
+    let { isLoading, isError, activeAppointment, activeConciergeEpisode } = useDashboard();
 
 
     return (
@@ -50,9 +49,9 @@ export const Home = () => {
                 <p>Manage all your video consultations here.</p>
             </Section>
             <Section style={{ marginBottom: "30px" }}>
-                {activeDoctorEpisode ?
+                {activeAppointment ?
                     <WideButton theme={theme} color="primary" onClick={() => navigate('/consultation-room')}>Enter Consultation Room</WideButton> :
-                    <WideButton theme={theme} color="primary" onClick={() => navigate('/start')}>Consult with a doctor</WideButton>
+                    <WideButton theme={theme} color="primary" onClick={() => navigate('/start')}>Book Appointment Now</WideButton>
                 }
             </Section>
             <Section style={{ marginBottom: "30px" }}>

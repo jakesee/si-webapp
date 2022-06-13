@@ -1,11 +1,14 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { AuthContext } from "../context/AuthProvider";
 import http from "../http"
-import { EpisodeStatus, EpisodeType, IEpisode } from "../interfaces/episode";
+import { EpisodeStatus, EpisodeType, IAppointment, IEpisode } from "../interfaces/episode";
 
 
-export const useDashboard = (accessToken: string) => {
+export const useDashboard = () => {
 
-    let [activeDoctorEpisode, setActiveDoctorEpisode] = useState<IEpisode | null>();
+
+    let { accessToken, session } = useContext(AuthContext);
+    let [activeAppointment, setActiveAppointment] = useState<IAppointment | null>();
     let [activeConciergeEpisode, setActiveConciergeEpisode] = useState<IEpisode | null>();
     let [isLoading, setIsLoading] = useState(false);
     let [isError, setIsError] = useState(false);
@@ -13,25 +16,24 @@ export const useDashboard = (accessToken: string) => {
 
     useEffect(() => {
 
-        const getActiveEpisode = (episodes: IEpisode[], type: EpisodeType) => {
-            let activeEpisodes = episodes.filter(e => e.type === EpisodeType.Diary && e.status == EpisodeStatus.Opened).sort((a, b) => b.id - b.id);
-            return activeEpisodes.length > 0 ? activeEpisodes[0] : null;
-        }
-
         (async () => {
             try {
                 setIsError(false);
                 setIsLoading(true);
-                let episodes = await http.getEpisodes(accessToken);
-
+                let episodes = await http.getEpisodes<IEpisode>(accessToken!);
                 if (episodes) {
-                    let episode = getActiveEpisode(episodes, EpisodeType.Diary);
-                    console.log('doctor', episode);
-                    setActiveDoctorEpisode(episode);
-
-                    episode = getActiveEpisode(episodes, EpisodeType.CallCentre);
+                    let activeEpisodes = episodes.filter(e => e.type === EpisodeType.CallCentre && e.status == EpisodeStatus.Opened).sort((a, b) => b.id - b.id);
+                    let episode = activeEpisodes.length > 0 ? activeEpisodes[0] : null;
                     console.log('concierge', episode);
                     setActiveConciergeEpisode(episode);
+                }
+
+                let appointments = await http.getAppointments<IAppointment>(accessToken!, session!.id)
+                if (appointments) {
+                    appointments = appointments.sort((a, b) => b.startAt.getTime() - a.startAt.getTime());
+                    let appointment = appointments ? appointments[0] : null;
+                    console.log('appointment', appointment);
+                    setActiveAppointment(appointment);
                 }
 
                 setIsLoading(false);
@@ -41,5 +43,5 @@ export const useDashboard = (accessToken: string) => {
         })()
     }, [accessToken])
 
-    return { activeDoctorEpisode, activeConciergeEpisode, isLoading, isError }
+    return { activeAppointment, activeConciergeEpisode, isLoading, isError }
 }
