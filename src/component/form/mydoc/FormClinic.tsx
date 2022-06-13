@@ -1,6 +1,5 @@
 import React, { useContext } from "react";
 import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
 import { Section, FormTitle, FormProps, FormButtonNav } from "../../common";
 import { AppContext } from "../../../context/AppContext";
 
@@ -21,7 +20,6 @@ const ClinicCell = styled.li`
 
 export const FormClinic = ({ onNext, onBack }: FormProps<void, number>) => {
 
-    const navigate = useNavigate();
     const { data, theme } = useContext(AppContext);
 
     return (

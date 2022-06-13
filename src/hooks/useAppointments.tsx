@@ -1,8 +1,8 @@
 import groupBy from "lodash/groupBy";
-import React, { useContext } from "react";
+import { useContext } from "react";
 import { AppContext } from "../context/AppContext";
-import { AppointmentStatus, EpisodeStatus, IAppointment } from "../interfaces/episode";
-import { IUser, UserRole } from "../interfaces/user";
+import { AppointmentStatus, EpisodeStatus } from "../interfaces/episode";
+import { UserRole } from "../interfaces/user";
 
 
 export const useAppointments = () => {

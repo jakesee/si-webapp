@@ -55,9 +55,9 @@ export const InfoBox = ({title, type, children }: InfoBoxProps) => {
     return (
         <Wrapper>
             <div className="infobox-header">
-                {type == "Info" && <div className="infobox-icon info"><InfoOutlinedIcon fontSize="inherit" /></div>}
-                {type == "Warn" && <div className="infobox-icon warn"><WarningAmberOutlinedIcon fontSize="inherit" /></div>}
-                {type == "Error" && <div className="infobox-icon error"><CancelOutlinedIcon fontSize="inherit" /></div>}
+                {type === "Info" && <div className="infobox-icon info"><InfoOutlinedIcon fontSize="inherit" /></div>}
+                {type === "Warn" && <div className="infobox-icon warn"><WarningAmberOutlinedIcon fontSize="inherit" /></div>}
+                {type === "Error" && <div className="infobox-icon error"><CancelOutlinedIcon fontSize="inherit" /></div>}
                 <div className="infobox-title">{title}</div>
             </div>
             <div className="infobox-content">{children}</div>

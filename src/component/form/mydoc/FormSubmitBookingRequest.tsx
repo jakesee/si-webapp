@@ -1,8 +1,7 @@
 import { format } from "date-fns";
-import React, { useCallback, useContext } from "react";
+import React, { useContext } from "react";
 import styled from "styled-components";
 import { AppContext } from "../../../context/AppContext";
-import { useJourney } from "../../../hooks/useJourney";
 import { IProvider } from "../../../interfaces/provider";
 import { ITimeslot } from "../../../interfaces/timeslot";
 import { IUser } from "../../../interfaces/user";

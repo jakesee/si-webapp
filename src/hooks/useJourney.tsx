@@ -35,7 +35,7 @@ export interface IJourneyHook<T extends Dictionary<string>> extends IJourneyStat
 
 export const useJourney = <T extends Dictionary<string>,>(user: IUser, totalSteps: number): IJourneyHook<T>  => {
 
-    let { data, setData } = useContext(AppContext);
+    let { setData } = useContext(AppContext);
 
     let [step, setStep] = useState(0);
     let [patient, setPatient] = useState(user);

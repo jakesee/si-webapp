@@ -30,7 +30,7 @@ function App() {
   return (
     <AppContext.Provider value={{ data, theme, setData, session, setSession }}>
       <GlobalStyles theme={theme} />
-      <BrowserRouter>
+      <BrowserRouter basename="/myfriend">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/appointments" element={<Appointments />} />

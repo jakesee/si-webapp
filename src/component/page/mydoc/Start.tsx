@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { Page } from "../../control/Page";
 import { Stepper } from "../../control/Stepper";
@@ -19,52 +19,48 @@ export const Start = () => {
     let {theme, session, data } = useContext(AppContext);
 
     let TOTAL_STEPS = 6;
-    let [form, setForm] = useState(<></>)
 
     let journey = useJourney<IFormTriageQuestions>(session!, TOTAL_STEPS)
 
+    const onTriageSubmit = (e: any, value: IFormTriageQuestions) => {
+        journey.setTriage(value);
+        journey.onNext();
+    }
 
-
-    useEffect(() => {
-        const onTriageSubmit = (e: any, value: IFormTriageQuestions) => {
-            journey.setTriage(value);
-            journey.onNext();
+    const onDoctorChosen = (e: any, value: IUser) => {
+        if (journey.doctor?.id !== value.id) {
+            journey.setDoctor(value)
+            journey.setTimeslot(undefined);
         }
 
-        const onDoctorChosen = (e: any, value: IUser) => {
-            if (journey.doctor?.id !== value.id) {
-                journey.setDoctor(value)
-                journey.setTimeslot(undefined);
-            }
+        journey.onNext();
+    }
 
-            journey.onNext();
-        }
+    const onTimeslotChosen = (e: any, value: ITimeslot) => {
+        journey.setTimeslot(value)
+        journey.onNext();
+    }
 
-        const onTimeslotChosen = (e: any, value: ITimeslot) => {
-            journey.setTimeslot(value)
-            journey.onNext();
-        }
+    const onConfirmBooking = (e: any) => {
+        journey.setPatient(session!);
+        journey.submit();
+        navigate("/appointments");
+    }
 
-        const onConfirmBooking = (e: any) => {
-            journey.setPatient(session!);
-            journey.submit();
-            navigate("/appointments");
-        }
+    const onClinicSubmit = (e: any, groupId: number) => {
+        journey.setGroupId(groupId);
+        journey.onNext();
+    }
 
-        const onClinicSubmit = (e: any, groupId: number) => {
-            journey.setGroupId(groupId);
-            journey.onNext();
-        }
-
+    const getForm = () => {
         switch (journey.step) {
             case 1:
-                setForm(<FormEmergency
+                return (<FormEmergency
                     onBack={(e) => journey.onBack()}
                     onNext={(e) => journey.onNext()} />);
-                break;
 
             case 2:
-                setForm(
+                return (
                     <FormTriage
                         defaultValue={{
                             animal: journey.triage?.animal ?? "",
@@ -76,24 +72,21 @@ export const Start = () => {
                         onNext={(e, value) => onTriageSubmit(e, value)}
                     />
                 );
-                break;
             case 3:
-                setForm(
+                return (
                     <FormSelectDoctor
                         input={data.providers.find(p => p.id === journey.groupId)!}
                         defaultValue={journey.doctor}
                         onBack={(e) => journey.onBack()}
                         onNext={(e, value) => onDoctorChosen(e, value)} />);
-                break;
             case 4:
-                setForm(<FormSelectTimeslot
+                return (<FormSelectTimeslot
                     input={journey.doctor}
                     defaultValue={journey.timeslot}
                     onBack={(e) => journey.onBack()}
                     onNext={(e, value) => onTimeslotChosen(e, value)} />);
-                break;
             case 5:
-                setForm(<FormSubmitBookingRequest
+                return (<FormSubmitBookingRequest
                     input={{
                         patient: journey.patient,
                         doctor: journey.doctor!,
@@ -101,13 +94,11 @@ export const Start = () => {
                         timeslot: journey.timeslot!
                     }}
                     onBack={(e) => journey.onBack()}
-                    onNext={(e) => onConfirmBooking(e) } />);
-                break;
+                    onNext={(e) => onConfirmBooking(e)} />);
             default: // step == 0
-                setForm(<FormClinic onNext={(e, value) => onClinicSubmit(e, value)} />);
-                break;
+                return (<FormClinic onNext={(e, value) => onClinicSubmit(e, value)} />);
         }
-    }, [journey.step, data.providers, journey, navigate, session])
+    }
 
 
     const onBack = (e: any) => {
@@ -117,7 +108,7 @@ export const Start = () => {
     return (
         <Page title="Book Appointment" onBack={(e) => onBack(e)} backLabel="Cancel">
             <Stepper totalSteps={TOTAL_STEPS} currentStep={journey.step} activeColor={theme.button_primary_background_color} inactiveColor={theme.button_secondary_background_color} />
-            { form }
+            { getForm() }
         </Page>
     )
 }

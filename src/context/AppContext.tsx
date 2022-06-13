@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext } from "react";
 import { Database, Theme } from "./Database";
 import { IDatabase } from "../interfaces/data";
 import { IUser } from "../interfaces/user";

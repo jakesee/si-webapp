@@ -41,7 +41,7 @@ export const FormSelectDoctor = ({ input, defaultValue, onNext, onBack = undefin
         let doctors = data.providers.find(p => p.id === input!.id)?.doctorIds.map(doctorId => data.users.find(u => u.id === doctorId))
         let element = doctors?.map(doctor => (
             <DoctorCard key={doctor?.id}>
-                <img src={`${doctor?.imgUrl}`} />
+                <img src={`${doctor?.imgUrl}`} alt="" />
                 <div>
                     <div className="name">{`${doctor?.firstName} ${doctor?.lastName}`}</div>
                     <div className="specialty">{doctor?.speciality?.reduce((prev, curr) => `${prev}, ${curr}`)}</div>

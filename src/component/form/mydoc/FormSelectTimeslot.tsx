@@ -84,7 +84,7 @@ export const FormSelectTimeslot = ({ input, defaultValue, onNext, onBack = undef
         <Section>
             <FormTitle>Select Timeslot</FormTitle>
             <DoctorCard key={input?.id}>
-                <img src={`${input?.imgUrl}`} />
+                <img src={`${input?.imgUrl}`} alt=""/>
                 <div>
                     <div className="name">{`${input?.firstName} ${input?.lastName}`}</div>
                     <div className="specialty">{input?.speciality?.reduce((prev, curr) => `${prev}, ${curr}`)}</div>

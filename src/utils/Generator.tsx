@@ -118,10 +118,10 @@ export default class Generator {
         database.providers.forEach(provider => {
             provider.doctorIds = provider.doctorIds.concat(this.any(doctors, this.random(5, 10)).map(doctor => doctor.id));
             // remove duplicates
-            provider.doctorIds = provider.doctorIds.filter((value, index, self) => self.indexOf(value) == index);
+            provider.doctorIds = provider.doctorIds.filter((value, index, self) => self.indexOf(value) === index);
         })
 
-        
+
 
         // fix one doctor and patient so that we can use it to login
         doctors[0].username = 'doctor';
@@ -243,7 +243,7 @@ export default class Generator {
             "role": role
         };
 
-        if (role == UserRole.doctor) {
+        if (role === UserRole.doctor) {
             user.clinic = this.anyone(RANDOM.clinicNames);
             user.bio = `${this.anyone(RANDOM.sentences)} ${this.anyone(RANDOM.sentences)} ${this.anyone(RANDOM.sentences)}`;
             user.speciality = this.any(RANDOM.speciality, this.random(1, 3));
