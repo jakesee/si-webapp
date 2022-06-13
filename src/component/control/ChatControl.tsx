@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useRef, useState } from "react";
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import VideoCameraFrontIcon from '@mui/icons-material/VideoCameraFront';
 import SendIcon from '@mui/icons-material/Send';
@@ -62,6 +62,8 @@ export const ChatControl = <T,>({ children, theme, onStartVideo, isVideoReady = 
 
     const muiIconSx = { fontSize: "2.1em", color: `rgba(0, 0, 0, 0.54)` }
 
+    let inputFile = useRef<HTMLInputElement>(null);
+
     let [message, setMessage] = useState("")
 
     const toColor = (ref: string) => {
@@ -89,6 +91,19 @@ export const ChatControl = <T,>({ children, theme, onStartVideo, isVideoReady = 
         }
     }
 
+    const onAttachFile = (e: any) => {
+
+        inputFile.current?.click();
+
+        onAttach && onAttach(e);
+    }
+
+    const onImageChange = (e:any) => {
+        if (e.target.files && e.target.files[0]) {
+            console.log(URL.createObjectURL(e.target.files[0]));
+        }
+    }
+
     return (
         <Wrapper>
             <Content>
@@ -99,9 +114,10 @@ export const ChatControl = <T,>({ children, theme, onStartVideo, isVideoReady = 
                 {onStartVideo && <VideoCameraFrontIcon sx={{ ...muiIconSx, color: isVideoReady ? theme.button_primary_background_color : undefined }} onClick={(e) => onStartVideo(e)} />}
                 <ChatInput>
                     <input value={message} onChange={(e) => setMessage(e.target.value)} onKeyDown={(e) => onInputKeydown(e) }/>
-                    {onAttach && <AttachFileIcon sx={muiIconSx} onClick={(e) => onAttach(e)} />}
+                    {onAttach && <AttachFileIcon sx={muiIconSx} onClick={(e) => onAttachFile(e)} />}
                 </ChatInput>
-                <SendIcon sx={muiIconSx} onClick={(e) => onSendMessage(e, message)}/>
+                <SendIcon sx={muiIconSx} onClick={(e) => onSendMessage(e, message)} />
+                <input type="file" id="file" ref={inputFile} onChange={ (e) => onImageChange(e) } style={{display: "none" }} />
             </ControlBar>
         </Wrapper>
     )
