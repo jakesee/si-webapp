@@ -39,6 +39,7 @@ export interface IEpisode {
     status: EpisodeStatus,
     type: EpisodeType,
     created_at: Date,
+    chat_id_username: string
 }
 
 export interface IAppointment {
@@ -65,6 +66,7 @@ export class Episode implements IEpisode {
     participants!: IUser[];
     messages!: IMessage[];
     created_at: Date = new Date();
+    chat_id_username: string = "";
 
     constructor(template: IEpisode) {
         console.log('Episode', template);

@@ -1,5 +1,5 @@
 import { IDatabase } from "../interfaces/data";
-import { AppointmentStatus, MessageType, EpisodeStatus, EpisodeType, IMessage, IEpisode, Appointment } from "../interfaces/episode";
+import { AppointmentStatus, MessageType, EpisodeStatus, EpisodeType, IMessage, IEpisode, Appointment, Episode } from "../interfaces/episode";
 import { IProvider } from "../interfaces/provider";
 import { ConsultedFor, ICasenote, ICasenoteRevision, IIcd10 } from "../interfaces/records";
 import { IUser, User, UserRole } from "../interfaces/user";
@@ -280,15 +280,16 @@ export default class Generator {
 
         const participants = [this.anyone(patients), this.anyone(doctors)];
 
-        let episode: IEpisode = {
+        let episode = new Episode({
             "participants": participants,
             "providerId": this.anyone(providers).id,
             "id": this.random(10000, 99999),
             "messages": this.randomChatHistory(participants),
             "status": (this.random(1, 10) % 2 === 0) ? EpisodeStatus.Opened : EpisodeStatus.Closed,
             "type": this.random(1, 6) as EpisodeType,
-            "created_at": new Date()
-        }
+            "created_at": new Date(),
+            "chat_id_username": ""
+        })
 
         return episode;
     }

@@ -30,6 +30,7 @@ export interface IUser {
   availability?: ITimeslot[],
   role: UserRole,
   is_test: boolean;
+  chat_id_username?: string;
 
   // fields returned from api
   extras?: any[]

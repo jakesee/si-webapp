@@ -99,6 +99,7 @@ class HttpResponse<T> {
     success!: boolean;
     message!: string;
     timestamp!: string;
+    next_page_url?: string;
     data!: T;
 
     constructor(response: any) {
@@ -274,6 +275,19 @@ const http = {
             this._logError(error);
         }
     },
+
+    async getMessages<T>(access_token: string, episodeId: number, next_page_url?: string) {
+        try {
+            const config = { headers: { Authorization: `Bearer ${access_token}` } };
+            let endpoint = `${this.host_name}/api/v2/accounts/episodes/${episodeId}/messages`;
+            endpoint = next_page_url ? next_page_url : endpoint;
+
+            let { data: response } = await axios.get(endpoint, config);
+            return new HttpResponse<T[]>(response);
+        } catch (error) {
+            this._logError(error);
+        }
+    }
 }
 
 export default http;
