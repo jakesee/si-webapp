@@ -1,5 +1,5 @@
-import React, { ReactNode, useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { ReactNode, useContext, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { useAppointments } from "../../../hooks/useAppointments";
 import { InfoBox } from "../../control/InfoBox";
@@ -9,9 +9,11 @@ import { format } from "date-fns";
 import { AppContext } from "../../../context/AppProvider";
 import { Dialog } from "../../control/Dialog";
 import { ChatControl } from "../../control/ChatControl";
-import { IMessage } from "../../../interfaces/episode";
+import { AppointmentStatus, IMessage } from "../../../interfaces/episode";
 import { ChatBubble, ChatBubblePortrait } from "../../control/ChatBubble";
 import { AuthContext } from "../../../context/AuthProvider";
+import { useChatRoom } from "../../../hooks/useChatRoom";
+import { Loader } from "../../control/Loader";
 
 
 
@@ -38,18 +40,19 @@ const BookingInfo = styled.ul`
 export const ConsultationRoom = () => {
 
     const navigate = useNavigate();
+    const { appointmentId } = useParams();
+
+    let { isLoading, isError, appointment, episode } = useChatRoom(parseInt(appointmentId!))
 
     const { session } = useContext(AuthContext);
     const { theme, data } = useContext(AppContext);
 
-    const { getUpcomingAppointment } = useAppointments();
     const [showVideoNotReadyDialog, setShowVideoNotReadyDialog] = useState(false);
     const [showVideoReadyDialog, setShowVideoReadyDialog] = useState(false);
     const [isVideoReady, setIsVideoReady] = useState(false);
 
-    const appointment = getUpcomingAppointment();
 
-    const [messages] = useState<IMessage[]>(appointment ? appointment?.episode.messages : [])
+    const [messages] = useState<IMessage[]>([])
 
     const onStartVideo = () => {
         if (isVideoReady)
@@ -88,7 +91,7 @@ export const ConsultationRoom = () => {
 
         return (
             <ChatBubble key={index} align={align} bgColor={bgColor}>
-                <ChatBubblePortrait src={data.users.find(u => u.id === message.userId)?.imgUrl} />
+                <ChatBubblePortrait src={data.users.find(u => u.id === message.userId)?.image_url} />
                 <div className="msg-bubble">
                     <div className="msg"><p>{message.message}</p></div>
                     <div className="meta">{format(message.datetime, "yyyy-MM-dd HH:mm")}</div>
@@ -99,6 +102,7 @@ export const ConsultationRoom = () => {
 
     return (
         <Page title={isVideoReady ? "Consultation Room" : "Waiting Room"} onBack={() => navigate('/')} backLabel="Dashboard" isScrollable={false}>
+            {isLoading && <Loader theme={theme} />}
             {showVideoNotReadyDialog && (
                 <Dialog theme={theme} title="Video is not ready." onOK={(e) => hideAllDialogs()}>
                     <p>The doctor is currently busy. You will be able to join the video call when the doctor is ready at the appointment time.</p>
@@ -125,11 +129,11 @@ export const ConsultationRoom = () => {
                             <table>
                                 <tbody>
                                     <tr><td>Status</td><td>{appointment.status}</td></tr>
-                                    <tr><td>Episode Id</td><td>{appointment.episodeId}</td></tr>
-                                    <tr><td>Specialisation</td><td>{appointment.groupName}</td></tr>
-                                    <tr><td>Doctor</td><td>{`${appointment.doctor?.firstName} ${appointment.doctor?.lastName}`}</td></tr>
+                                    <tr><td>Episode Id</td><td>{appointment.episode_id}</td></tr>
+                                    <tr><td>Specialisation</td><td>{appointment.group_name}</td></tr>
+                                    <tr><td>Doctor</td><td>{`${appointment.doctor?.first_name} ${appointment.doctor?.last_name}`}</td></tr>
                                     <tr><td>Clinic</td><td>{appointment.doctor?.clinic}</td></tr>
-                                    <tr><td>Date/Time</td><td>{`${format(appointment.startAt, "dd MMM yyyy, HH:mm")} - ${format(appointment.endAt, "HH:mm")}`}</td></tr>
+                                    <tr><td>Date/Time</td><td>{`${format(appointment.start_at, "dd MMM yyyy, HH:mm")} - ${format(appointment.end_at, "HH:mm")}`}</td></tr>
                                 </tbody>
                             </table>
                         </AppointmentDetails>

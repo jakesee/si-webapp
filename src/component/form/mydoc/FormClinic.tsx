@@ -1,7 +1,7 @@
-import React, { useContext } from "react";
+import React from "react";
 import styled from "styled-components";
 import { Section, FormTitle, FormProps, FormButtonNav } from "../../common";
-import { AppContext } from "../../../context/AppProvider";
+import { IProvider } from "../../../interfaces/provider";
 
 const ClinicGrid = styled.ul`
     margin: 0;
@@ -19,17 +19,15 @@ const ClinicCell = styled.li`
     cursor: pointer;
 `
 
-export const FormClinic = ({ onNext, onBack }: FormProps<void, number>) => {
-
-    const { data, theme } = useContext(AppContext);
+export const FormClinic = ({ input, theme, onNext, onBack }: FormProps<IProvider[], IProvider>) => {
 
     return (
         <Section>
             <FormTitle>Choose a Specialist Clinic</FormTitle>
             <ClinicGrid>
-                {data.providers.map(clinic =>
-                    <ClinicCell key={clinic.id} onClick={(e) => onNext(e, clinic.id)}>
-                        <div className="name">{clinic.title}</div>
+                {input?.map(clinic =>
+                    <ClinicCell key={clinic.id} onClick={(e) => onNext(e, clinic)}>
+                        <div className="name">{clinic.name}</div>
                     </ClinicCell>
                 )}
             </ClinicGrid>

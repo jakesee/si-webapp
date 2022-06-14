@@ -1,10 +1,9 @@
 import { format } from "date-fns";
-import React, { useContext } from "react";
+import React from "react";
 import styled from "styled-components";
-import { AppContext } from "../../../context/AppProvider";
 import { IProvider } from "../../../interfaces/provider";
 import { ITimeslot } from "../../../interfaces/timeslot";
-import { IUser } from "../../../interfaces/user";
+import { User } from "../../../interfaces/user";
 import { FormButton, FormButtonNav, FormProps, FormTitle, Section } from "../../common";
 import { InfoBox } from "../../control/InfoBox";
 
@@ -23,14 +22,12 @@ const BookingInfo = styled.ul`
     }
 `
 
-export const FormSubmitBookingRequest = ({ input, onBack, onNext }: FormProps<{
-    patient: IUser
-    doctor: IUser,
+export const FormSubmitBookingRequest = ({ input, theme, onBack, onNext }: FormProps<{
+    patient: User
+    doctor: User,
     provider: IProvider,
     timeslot: ITimeslot
 }, void>) => {
-
-    let { theme } = useContext(AppContext);
 
     return (
         <Section>
@@ -39,8 +36,8 @@ export const FormSubmitBookingRequest = ({ input, onBack, onNext }: FormProps<{
             <AppointmentInfo>
                 <table>
                     <tbody>
-                        <tr><td>Specialisation</td><td>{ input?.provider.title}</td></tr>
-                        <tr><td>Doctor</td><td>{`${input?.doctor.firstName} ${input?.doctor.lastName}` }</td></tr>
+                        <tr><td>Specialisation</td><td>{ input?.provider.name}</td></tr>
+                        <tr><td>Doctor</td><td>{`${input?.doctor.first_name} ${input?.doctor.last_name}` }</td></tr>
                         <tr><td>Clinic</td><td>{ input?.doctor.clinic }</td></tr>
                         <tr><td>Date/Time</td><td>{format(input?.timeslot.start!, "d MMM yyyy, EEEE, HH:mm")}</td></tr>
                     </tbody>

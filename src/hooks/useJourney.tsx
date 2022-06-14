@@ -1,49 +1,64 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AppContext } from "../context/AppProvider";
-import { AppointmentStatus, EpisodeStatus, EpisodeType, IAppointment, IEpisode, IMessage, MessageType } from "../interfaces/episode";
+import { AuthContext } from "../context/AuthProvider";
+import http from "../http";
+import { Appointment, IEpisode, IMessage, MessageType, IAppointment } from "../interfaces/episode";
+import { IProvider, Provider } from "../interfaces/provider";
 import { ITimeslot } from "../interfaces/timeslot";
-import { IUser } from "../interfaces/user";
-import Generator from "../utils/Generator";
+import { IUser, User } from "../interfaces/user";
 
 export type Dictionary<T> = { [key: string]: T }
 
 export interface IJourneyState<T extends Dictionary<string>> {
-    patient: IUser,
-    groupId: number | undefined,
-    doctor: IUser | undefined,
+    isLoading: boolean,
+    isError: boolean,
+    patient: User,
+    doctors: User[],
+    timeslots: ITimeslot[],
+    providers: IProvider[],
+    provider: IProvider | undefined,
+    doctor: User | undefined,
     timeslot: ITimeslot | undefined,
-    episodeId: number | undefined,
-    appointmentId: number | undefined,
     triage: T | undefined,
     step: number,
+    activeEpisode?: IEpisode,
+    activeAppointment?: Appointment
 }
 
 export interface IJourneyHook<T extends Dictionary<string>> extends IJourneyState<T> {
-    setPatient: React.Dispatch<React.SetStateAction<IUser>>,
-    setGroupId: React.Dispatch<React.SetStateAction<number | undefined>>,
-    setDoctor: React.Dispatch<React.SetStateAction<IUser | undefined>>,
+    setPatient: React.Dispatch<React.SetStateAction<User>>,
+    setProvider: React.Dispatch<React.SetStateAction<IProvider | undefined>>,
+    setDoctor: React.Dispatch<React.SetStateAction<User | undefined>>,
     setTimeslot: React.Dispatch<React.SetStateAction<ITimeslot | undefined>>,
-    setEpisodeId: React.Dispatch<React.SetStateAction<number | undefined>>,
     setTriage: React.Dispatch<React.SetStateAction<T | undefined>>,
-    setAppointmentId: React.Dispatch<React.SetStateAction<number | undefined>>,
-    onNext: () => void,
-    onBack: () => void,
-    submit: () => void,
+    onNext: VoidFunction,
+    onBack: VoidFunction,
+    submit: (done: VoidFunction) => void,
 }
 
+export const useJourney = <T extends Dictionary<string>,>(user: User, totalSteps: number): IJourneyHook<T>  => {
 
+    let { providerIds } = useContext(AppContext);
+    let { accessToken } = useContext(AuthContext);
 
-export const useJourney = <T extends Dictionary<string>,>(user: IUser, totalSteps: number): IJourneyHook<T>  => {
+    // api fetch state
+    let [isLoading, setIsLoading] = useState(false);
+    let [isError, setIsError] = useState(false);
 
+    // form input data
     let { setData } = useContext(AppContext);
+    let [doctors, setDoctors] = useState<User[]>([]);
+    let [timeslots, setTimeslots] = useState<ITimeslot[]>([]);
+    let [providers, setProviders] = useState<IProvider[]>([]);
 
+    // journey output
     let [step, setStep] = useState(0);
     let [patient, setPatient] = useState(user);
-    let [groupId, setGroupId] = useState<number>();
-    let [doctor, setDoctor] = useState<IUser>();
+    let [provider, setProvider] = useState<IProvider>();
+    let [doctor, setDoctor] = useState<User>();
     let [timeslot, setTimeslot] = useState<ITimeslot>();
-    let [episodeId, setEpisodeId] = useState<number>();
-    let [appointmentId, setAppointmentId] = useState<number>();
+    let [activeEpisode, setActiveEpisode] = useState<IEpisode>();
+    let [activeAppointment, setActiveAppointment] = useState<Appointment>();
     let [triage, setTriage] = useState<T>();
 
     const onNext = () => {
@@ -54,9 +69,35 @@ export const useJourney = <T extends Dictionary<string>,>(user: IUser, totalStep
         if (step > 0) setStep(step - 1);
     }
 
-    const submit = () => {
+    const submit = (done: VoidFunction) => {
 
-        console.log("submitting");
+        setIsLoading(true);
+        setIsError(false);
+
+        if (!accessToken || !provider || !patient || !doctor) return;
+
+        http.createEpisode<IEpisode>(accessToken, provider?.id, [patient.id, doctor.id]).then(response => {
+
+            console.log('createEpisode', response);
+            if (response && response.code === 200 && accessToken && doctor && timeslot && provider) {
+                setActiveEpisode(response.data);
+                console.log('episode', response.data.id)
+                http.createAppointment<IAppointment>(accessToken, response.data.id, patient.id, doctor?.id, timeslot?.start, provider?.consultation_duration).then(response => {
+                    console.log('createAppointment', response);
+                    if (response) {
+                        setActiveAppointment(new Appointment(response.data));
+                        console.log('appointment', response.data.id)
+                        console.log("appt id:", activeAppointment?.id, "episode id:", activeEpisode?.id);
+                        done();
+                    }
+                })
+            }
+
+            setIsLoading(false);
+
+        }).catch(error => {
+            setIsError(true);
+        });
 
         let message: IMessage = {
             userId: patient.id,
@@ -64,41 +105,85 @@ export const useJourney = <T extends Dictionary<string>,>(user: IUser, totalStep
             datetime: new Date(),
             type: MessageType.Message
         }
-        let newEpisode: IEpisode = {
-            id: Generator.random(10000, 99999),
-            providerId: groupId!,
-            participants: [patient, doctor!],
-            messages: [message],
-            status: EpisodeStatus.Opened,
-            type: EpisodeType.Diary
-        }
-        let newAppoinment: IAppointment = {
-            id: Generator.random(10000, 99999),
-            episodeId: newEpisode.id,
-            startAt: timeslot!.start,
-            endAt: timeslot!.end,
-            status: AppointmentStatus.Accepted
-        }
-
-        setData(data => {
-            let episodes = [ ...data.episodes, newEpisode ]
-            let appointments = [ ...data.appointments, newAppoinment ]
-            return { ...data, episodes, appointments };
-        });
-        setAppointmentId(newAppoinment.id);
-        setEpisodeId(newEpisode.id);
-
-        console.log("appt id:", newAppoinment.id, "episode id:", newEpisode.id);
     }
 
+    // load the providers on init
+    useEffect(() => {
+        if (!accessToken || providerIds.length === 0) return;
+
+        setIsLoading(true);
+        setIsError(false);
+
+        let promises = providerIds.map(i => http.getGroup<IProvider>(accessToken!, i));
+        Promise.all(promises).then((values) => {
+            let providers = values.filter((p: any) => p !== undefined).map((p: any) => new Provider(p));
+            setProviders(providers ?? [])
+            setIsLoading(false);
+        }).catch((reason) => {
+            setIsLoading(false);
+            setIsError(true);
+            console.log(reason);
+        });
+
+    }, [accessToken, providerIds]);
+
+    // update the list of doctors when group selection changed
+    useEffect(() => {
+
+        if (!accessToken || !provider) return;
+
+        setIsLoading(true);
+        setIsError(false);
+
+        http.getDoctors<IUser>(accessToken, provider.id).then((users) => {
+            // transpose
+            let newUsers: User[] = [];
+            if (users) newUsers = users.map(u => new User(u));
+            setDoctors(newUsers);
+            setIsLoading(false);
+        }).catch(reason => {
+            setIsLoading(false);
+            setIsError(true);
+            console.log(reason);
+        })
+
+    }, [accessToken, provider])
+
+    // fetch timeslots when doctor changed
+    useEffect(() => {
+        if (!accessToken || !doctor || !provider) return;
+
+        setIsLoading(true);
+        setIsError(false);
+
+        http.getDoctorTimeslots<string>(accessToken, provider.id, doctor.id).then(value => {
+            if (value) {
+                let timeslots = value.map(v => {
+                    let start = new Date(v);
+                    let end = new Date(start.getTime() + (provider?.consultation_duration ?? 15) * 60 * 60 * 1000);
+                    let timeslot: ITimeslot = { start, end }
+                    return timeslot;
+                })
+                setTimeslots(timeslots);
+            } else {
+                setTimeslots([]);
+            }
+            setIsLoading(false);
+        }).catch(reason => {
+            setIsLoading(false);
+            setIsError(true);
+        });
+    }, [accessToken, doctor, provider])
+
     return {
+        isLoading, isError,
+        doctors, timeslots, providers,
         patient, setPatient,
-        groupId, setGroupId,
+        provider, setProvider,
         doctor, setDoctor,
         timeslot, setTimeslot,
-        episodeId, setEpisodeId,
         triage, setTriage,
-        appointmentId, setAppointmentId,
+        activeEpisode, activeAppointment,
         step, onNext, onBack, submit
     }
 }

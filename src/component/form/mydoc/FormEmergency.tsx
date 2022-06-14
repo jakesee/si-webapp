@@ -20,9 +20,7 @@ const Question = styled.div`
     }
 `
 
-export const FormEmergency = ({ onNext, onBack = undefined }: FormProps<void, void>) => {
-
-    const {theme} = useContext(AppContext)
+export const FormEmergency = ({ onNext, theme, onBack = undefined }: FormProps<void, void>) => {
 
     return (
         <Section>

@@ -1,8 +1,9 @@
 import { format } from "date-fns";
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { useAppointments } from "../../../hooks/useAppointments";
+import { AppointmentStatus } from "../../../interfaces/episode";
 import { Section, WideButton } from "../../common";
 import { InfoBox } from "../../control/InfoBox";
 import { Page } from "../../control/Page";
@@ -29,24 +30,27 @@ export const WaitingRoom = () => {
 
     const navigate = useNavigate();
 
-    const { getUpcomingAppointment } = useAppointments();
+    const { appointments, selectedAppointment, selectAppointment } = useAppointments();
 
-    const appointment = getUpcomingAppointment();
+    useEffect(() => {
+        const appointment = appointments?.find(a => a.status === AppointmentStatus.Pending);
+        selectAppointment(appointment);
+    }, [])
 
     return (
         <Page title="Waiting Room" onBack={(e) => navigate('/')} backLabel="Dashboard">
-            {!appointment ? <p>There is no upcoming appointment.</p> :
+            {!selectedAppointment ? <p>There is no upcoming appointment.</p> :
             <Section>
                 <h3>Appointment Details</h3>
                 <AppointmentDetails>
                     <table>
                         <tbody>
-                                <tr><td>Status</td><td>{appointment.status}</td></tr>
-                                <tr><td>Episode Id</td><td>{appointment.episodeId}</td></tr>
-                                <tr><td>Specialisation</td><td>{appointment.groupName}</td></tr>
-                                <tr><td>Doctor</td><td>{`${appointment.doctor?.firstName} ${appointment.doctor?.lastName}`}</td></tr>
-                                <tr><td>Clinic</td><td>{appointment.doctor?.clinic}</td></tr>
-                                <tr><td>Date/Time</td><td>{`${format(appointment.startAt, "dd MMM yyyy, HH:mm")} - ${format(appointment.endAt, "HH:mm")}`}</td></tr>
+                                <tr><td>Status</td><td>{selectedAppointment.status}</td></tr>
+                                <tr><td>Episode Id</td><td>{selectedAppointment.episode_id}</td></tr>
+                                <tr><td>Specialisation</td><td>{selectedAppointment.group_name}</td></tr>
+                                <tr><td>Doctor</td><td>{`${selectedAppointment.doctor?.first_name} ${selectedAppointment.doctor?.last_name}`}</td></tr>
+                                <tr><td>Clinic</td><td>{selectedAppointment.doctor?.clinic}</td></tr>
+                                <tr><td>Date/Time</td><td>{`${format(selectedAppointment.start_at, "dd MMM yyyy, HH:mm")} - ${format(selectedAppointment.end_at, "HH:mm")}`}</td></tr>
                         </tbody>
                     </table>
                 </AppointmentDetails>

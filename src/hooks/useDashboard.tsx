@@ -1,18 +1,17 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthProvider";
 import http from "../http"
-import { EpisodeStatus, EpisodeType, IAppointment, IEpisode } from "../interfaces/episode";
+import { Appointment, Episode, IEpisode } from "../interfaces/episode";
 
 
 export const useDashboard = () => {
 
-
     let { accessToken, session } = useContext(AuthContext);
-    let [activeAppointment, setActiveAppointment] = useState<IAppointment | null>();
-    let [activeConciergeEpisode, setActiveConciergeEpisode] = useState<IEpisode | null>();
     let [isLoading, setIsLoading] = useState(false);
     let [isError, setIsError] = useState(false);
 
+    let [sortedEpisodes, setSortedEpisodes] = useState<Episode[]>();
+    let [sortedAppointments, setSortedAppointments] = useState<Appointment[]>();
 
     useEffect(() => {
 
@@ -22,22 +21,34 @@ export const useDashboard = () => {
             try {
                 setIsError(false);
                 setIsLoading(true);
-                let episodes = await http.getEpisodes<IEpisode>(accessToken!);
-                if (episodes) {
-                    let activeEpisodes = episodes.filter(e => e.type === EpisodeType.CallCentre && e.status == EpisodeStatus.Opened).sort((a, b) => b.id - b.id);
-                    let episode = activeEpisodes.length > 0 ? activeEpisodes[0] : null;
-                    console.log('concierge', episode);
-                    setActiveConciergeEpisode(episode);
-                }
 
-                let appointments = await http.getAppointments<IAppointment>(accessToken!, session!.id)
-                if (appointments) {
-                    appointments = appointments.sort((a, b) => b.startAt.getTime() - a.startAt.getTime());
-                    let appointment = appointments ? appointments[0] : null;
-                    console.log('appointment', appointment);
-                    setActiveAppointment(appointment);
-                }
-                setIsLoading(false);
+                let promises = [
+                    // fetch user episodes
+                    http.getEpisodes<IEpisode>(accessToken).then((response) => {
+                        if (response?.OK()) {
+                            let episodes = response.data.map(e => new Episode(e))
+                            episodes = response.data.sort((a, b) => b.created_at.getTime() - a.created_at.getTime())
+                            setSortedEpisodes(episodes);
+                        }
+                    }),
+                    // fetch user appointments
+                    http.getAppointments<Appointment>(accessToken!, session!.id).then(response => {
+                        if (response?.OK()) {
+                            let appointments = response.data.map(a => new Appointment(a))
+                            console.log('getAppointments', appointments);
+                            setSortedAppointments(appointments);
+                        }
+                    })
+                ]
+
+                Promise.all(promises).then(values => {
+                    setIsLoading(false);
+                }).catch(reason => {
+                    setIsError(true);
+                    setIsLoading(false);
+                });
+
+
             } catch (err: any) {
                 console.log('useDashboard', err);
                 setIsError(true);
@@ -46,5 +57,5 @@ export const useDashboard = () => {
         })()
     }, [accessToken, session])
 
-    return { activeAppointment, activeConciergeEpisode, isLoading, isError }
+    return { sortedEpisodes, sortedAppointments, isLoading, isError }
 }

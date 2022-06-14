@@ -1,3 +1,4 @@
+import { ConstructionOutlined } from "@mui/icons-material";
 import { IProvider } from "./provider";
 import { IUser, User, UserRole } from "./user";
 
@@ -36,34 +37,44 @@ export interface IEpisode {
     providerId: number;
     messages: IMessage[];
     status: EpisodeStatus,
-    type: EpisodeType
+    type: EpisodeType,
+    created_at: Date,
 }
 
 export interface IAppointment {
     id: number;
-    episodeId: number;
-    startAt: Date;
-    endAt: Date;
+    episode_id: number;
+    start_at: Date;
+    end_at: Date;
     status: AppointmentStatus,
+    created_at: Date,
+
+    // additional fields returned by api
+    group_id?: number;
+    group_name?: string;
+    doctor?: IUser;
+    duration?: number
 }
 
 export class Episode implements IEpisode {
 
-    id: number;
-    providerId: number;
-    status: EpisodeStatus;
-    type: EpisodeType;
+    id!: number;
+    providerId!: number;
+    status!: EpisodeStatus;
+    type!: EpisodeType;
+    participants!: IUser[];
+    messages!: IMessage[];
+    created_at: Date = new Date();
 
-    constructor(episode: IEpisode,
-        public appointments: IAppointment[],
-        public provider: IProvider,
-        public messages: Message[],
-        public participants: User[]
-    ) {
-        this.id = episode.id;;
-        this.providerId = episode.providerId;
-        this.status = episode.status;
-        this.type = episode.type;
+    constructor(template: IEpisode) {
+        console.log('Episode', template);
+
+        let created_at = new Date(template.created_at);
+
+        Object.assign(this, {
+            ...template,
+            created_at
+        })
     }
 }
 
@@ -83,7 +94,7 @@ export class Message implements IMessage {
 }
 
 export enum AppointmentStatus {
-    New = 1,
+    Pending = "pending",
     Accepted = 2,
     Rejected = 3,
     Completed = 4,
@@ -91,22 +102,46 @@ export enum AppointmentStatus {
 }
 
 export class Appointment implements IAppointment {
-    id: number;
-    episodeId: number;
-    startAt: Date;
-    endAt: Date;
-    status: AppointmentStatus;
-    patient: User | null;
-    doctor: User | null;
+    id!: number;
+    episode_id!: number;
+    start_at!: Date;
+    end_at!: Date;
+    status!: AppointmentStatus;
+    patient?: User;
+    doctor?: User;
+    created_at: Date = new Date();
+    group_name?: string;
+    group_id?: number;
+    duration?: number;
 
-    constructor(template: IAppointment, public episode: Episode) {
-        this.id = template.id;
-        this.episodeId = template.episodeId;
-        this.startAt = template.startAt;
-        this.endAt = template.endAt;
-        this.status = template.status;
+    constructor(template: IAppointment) {
 
-        this.patient = episode.participants.find(p => p.role === UserRole.patient) ?? null;
-        this.doctor = episode.participants.find(p => p.role === UserRole.doctor) ?? null;
+        let duration = template.duration ?? 15;
+        let created_at = new Date(template.created_at!);
+        let start_at = new Date(template.start_at!)
+        let end_at = new Date(start_at.getTime() + duration * 60 * 60 * 1000);
+        let _template = (template as any)?.doctor?.doctor?.account ?? null;
+        let doctor = _template ? new User(_template) : undefined;
+
+        Object.assign(this, {
+            ...template,
+            created_at, start_at, end_at, duration, doctor
+        });
+    }
+
+    isUpcoming(): boolean {
+        let active = [AppointmentStatus.Pending, AppointmentStatus.Accepted]
+        return active.includes(this.status);
+    }
+
+    getAppointmentStatusLabel(episodeStatus: EpisodeStatus) {
+
+        if (episodeStatus === EpisodeStatus.Closed) return "Completed";
+        if (this.status === AppointmentStatus.Accepted) return "Confirmed";
+        if (this.status === AppointmentStatus.Rejected) return "Cancelled";
+        if (this.status === AppointmentStatus.Timeout) return "Cancelled";
+        if (this.status === AppointmentStatus.Completed) return "Consulted";
+        return "Pending Confirmation";
+
     }
 }

@@ -1,9 +1,7 @@
-import React, { useContext } from "react";
+import React from "react";
 import styled from "styled-components";
 import { FormButtonNav, FormTitle, FormButton, FormProps, Section } from "../../common";
-import { AppContext } from "../../../context/AppProvider";
-import { IUser } from "../../../interfaces/user";
-import { IProvider } from "../../../interfaces/provider";
+import { User } from "../../../interfaces/user";
 
 
 const DoctorCard = styled.div`
@@ -33,18 +31,15 @@ const DoctorCard = styled.div`
     }
 `
 
-export const FormSelectDoctor = ({ input, defaultValue, onNext, onBack = undefined }: FormProps<IProvider, IUser>) => {
-
-    let { data } = useContext(AppContext);
+export const FormSelectDoctor = ({ input, defaultValue, onNext, onBack = undefined }: FormProps<User[], User>) => {
 
     const renderDoctors = () => {
-        let doctors = data.providers.find(p => p.id === input!.id)?.doctorIds.map(doctorId => data.users.find(u => u.id === doctorId))
-        let element = doctors?.map(doctor => (
+        let element = input?.map(doctor => (
             <DoctorCard key={doctor?.id}>
-                <img src={`${doctor?.imgUrl}`} alt="" />
+                <img src={`${doctor?.image_url}`} alt="" />
                 <div>
-                    <div className="name">{`${doctor?.firstName} ${doctor?.lastName}`}</div>
-                    <div className="specialty">{doctor?.speciality?.reduce((prev, curr) => `${prev}, ${curr}`)}</div>
+                    <div className="name">{`${doctor?.first_name} ${doctor?.last_name}`}</div>
+                    <div className="specialty">{doctor?.speciality && doctor?.speciality.length > 0 ? doctor.speciality.reduce((prev, curr) => `${prev}, ${curr}`) : ''}</div>
                     <div className="clinic">{ doctor?.clinic}</div>
                 </div>
                 <div className="right"><FormButton onClick={(e) => onNext(e, doctor!)}>Select</FormButton></div>

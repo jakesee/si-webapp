@@ -8,6 +8,7 @@ import { AppContext } from "../../../context/AppProvider";
 import { WideButton, Section } from "../../common";
 import { useDashboard } from "../../../hooks/useDashboard";
 import { Loader } from "../../control/Loader";
+import { AppointmentStatus } from "../../../interfaces/episode";
 
 
 const Grid = styled.div`
@@ -36,8 +37,9 @@ export const Home = () => {
 
     // const { getUpcomingAppointment } = useAppointments();
     //const upcomingAppointment = getUpcomingAppointment();
-    let { isLoading, isError, activeAppointment, activeConciergeEpisode } = useDashboard();
+    let { isLoading, isError, sortedAppointments } = useDashboard();
 
+    let activeAppointment = sortedAppointments?.find(a => a.isUpcoming());
 
     return (
         <Page title="Dashboard">
@@ -47,7 +49,7 @@ export const Home = () => {
             </Section>
             <Section style={{ marginBottom: "30px" }}>
                 {activeAppointment ?
-                    <WideButton theme={theme} color="primary" onClick={() => navigate('/consultation-room')}>Enter Consultation Room</WideButton> :
+                    <WideButton theme={theme} color="primary" onClick={() => navigate(`/consultation-room/${activeAppointment?.id}`)}>Enter Consultation Room</WideButton> :
                     <WideButton theme={theme} color="primary" onClick={() => navigate('/start')}>Book Appointment Now</WideButton>
                 }
             </Section>

@@ -6,36 +6,24 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 const Wrapper = styled.div`
 
     margin-bottom: 10px;
-    padding: 10px;
     border-radius: 5px;
     border: 1px solid #cccccc;
 
     .header {
         cursor: pointer;
+        padding: 10px;
 
         display: flex;
         align-items: center;
+
         .right {
             margin-left: auto;
         }
     }
 
     .contents {
-        max-height: 600px;
-        margin-top: 10px;
-        transition: max-height 0.3s ease-out;
+        padding: 0 10px 10px 10px;
     }
-
-    &.collapsed {
-        padding: 10px 10px 0 10px;
-
-        .contents {
-            max-height: 0px;
-            transition: max-height 0.3s ease-out;
-            overflow: hidden;
-        }
-    }
-
 `
 
 export interface CollapsiblePanelProps {
@@ -66,8 +54,8 @@ export const CollapsiblePanel = ({ isCollapsed = true, head = "", children = und
                 {isCollapsed ? (<span className="right"><ExpandMoreIcon /></span>) : null }
                 {!isCollapsed ? (<span className="right"><ExpandLessIcon /></span>) : null }
             </div>
-            {/* {!isCollapsed ? (<div className="contents">{children}</div>) : null } */}
-            <div className="contents">{children}</div>
+            {!isCollapsed ? (<div className="contents">{children}</div>) : null }
+            {/* <div className="contents">{children}</div> */}
         </Wrapper>
     )
 }

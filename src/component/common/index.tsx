@@ -57,6 +57,7 @@ export const FormTitle = styled.h2`
 
 
 export interface FormProps<IInput, IOuput> {
+    theme: ITheme,
     onNext: (e: any, value: IOuput) => void;
     onBack?: (e: any) => void;
     input?: IInput,

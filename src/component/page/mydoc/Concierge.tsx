@@ -44,7 +44,7 @@ export const Concierge = () => {
 
         return (
             <ChatBubble key={index} align={align} bgColor={bgColor}>
-                <ChatBubblePortrait src={data.users.find(u => u.id === message.userId)?.imgUrl} />
+                <ChatBubblePortrait src={data.users.find(u => u.id === message.userId)?.image_url} />
                 <div className="msg-bubble">
                     <div className="msg"><p>{message.message}</p></div>
                     <div className="meta">{format(message.datetime, "yyyy-mm-dd HH:mm")}</div>

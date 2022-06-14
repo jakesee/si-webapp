@@ -1,57 +1,48 @@
-import groupBy from "lodash/groupBy";
-import { useContext } from "react";
-import { AppContext } from "../context/AppProvider";
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthProvider";
-import { AppointmentStatus, EpisodeStatus } from "../interfaces/episode";
-import { UserRole } from "../interfaces/user";
+import http from "../http";
+import { Appointment, AppointmentStatus, Episode, EpisodeStatus, IAppointment } from "../interfaces/episode";
 
 
 export const useAppointments = () => {
 
-    const { session } = useContext(AuthContext);
-    let { data } = useContext(AppContext);
+    let { accessToken, session } = useContext(AuthContext);
+    let [isLoading, setIsLoading] = useState(false);
+    let [isError, setIsError] = useState(false);
 
-    const getAppointments = () => {
-        let episodes = data.episodes.filter(e => e.participants.findIndex(p => p.id === session?.id) >= 0);
-        let episodeIds = episodes.map(e => e.id);
-        let appointments = data.appointments.filter(a => episodeIds.includes(a.episodeId));
-        appointments = appointments.sort((a, b) => b.startAt.getTime() - a.startAt.getTime());
+    let [appointments, setAppointments] = useState<Appointment[]>();
+    let [selectedAppointment, selectAppointment] = useState<Appointment>();
+    let [selectedEpisode, selectEpisode] = useState<Episode>();
 
-        // make a dictionary instead of using Array.find() to optmised search
-        let groupedEpisodes = groupBy(episodes, e => e.id);
+    // load all appointments
+    useEffect(() => {
+        setIsError(false);
+        setIsLoading(true);
 
-        let moreAppointments = appointments.map(a => {
-            let episode = groupedEpisodes[a.episodeId][0];
-            let provider = data.providers.find(p => p.id === episode.providerId);
-            let doctor = episode.participants.find(p => p.role === UserRole.doctor)
-            let status = getAppointmentStatusLabel(episode.status, a.status);
-            return { ...a, episode, doctor, status, groupName: provider?.title }
-        });
+        // fetch user appointments
+        http.getAppointments<IAppointment>(accessToken!, session!.id).then(response => {
+            if (response?.OK()) {
+                let appointments: Appointment[] = response.data.map(a => new Appointment(a))
+                let sorted = appointments.sort((a, b) => b.start_at.getTime() - a.start_at.getTime())
+                console.log('getAppointments', sorted);
+                setAppointments(sorted);
+            }
+            setIsLoading(false);
+        }).catch(reason => {
+            setIsError(true);
+            setIsLoading(false);
+        })
+    }, [accessToken, session]);
 
-        return moreAppointments;
-    }
 
-    const getUpcomingAppointment = () => {
-        const appointments = getAppointments();
-        if (appointments.length > 0) {
-            return appointments.find(a => a.status === "Confirmed");
-        }
-    }
-
-    const getAppointmentStatusLabel = (episodeStatus: EpisodeStatus, appointmentStatus: AppointmentStatus) => {
-
-        if (episodeStatus === EpisodeStatus.Closed) return "Completed";
-        if (appointmentStatus === AppointmentStatus.Accepted) return "Confirmed";
-        if (appointmentStatus === AppointmentStatus.Rejected) return "Cancelled";
-        if (appointmentStatus === AppointmentStatus.Timeout) return "Cancelled";
-        if (appointmentStatus === AppointmentStatus.Completed) return "Consulted";
-        return "Pending Confirmation";
-
-    }
+    useEffect(() => {
+        // get other details e.g. case notes and e-documents
+    }, [selectedAppointment])
 
     return {
-        getAppointments,
-        getUpcomingAppointment
+        isLoading, isError,
+        appointments,
+        selectedAppointment, selectAppointment
     }
 
 }

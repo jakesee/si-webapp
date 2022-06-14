@@ -1,16 +1,18 @@
+import Generator from "../utils/Generator";
 import { ITimeslot } from "./timeslot";
 
 export interface IUser {
   id: number;
   username: string;
   password: string;
-  firstName: string;
-  lastName: string;
+  title: string;
+  first_name: string;
+  last_name: string;
   gender: string;
   birthdate: Date;
   contact?: string;
   email?: string;
-  imgUrl?: string;
+  image_url?: string;
   nationalId?: string;
   country?: string,
   city?: string,
@@ -24,9 +26,13 @@ export interface IUser {
   clinic?: string,
   bio?: string,
   speciality?: string[],
-  availability?: ITimeslot[]
+  langauges?: string[],
+  availability?: ITimeslot[],
+  role: UserRole,
+  is_test: boolean;
 
-  role: UserRole
+  // fields returned from api
+  extras?: any[]
 }
 
 export enum UserRole {
@@ -38,22 +44,23 @@ export enum UserRole {
 
 export class User implements IUser {
 
-  id: number;
-  username: string;
-  password: string;
-  firstName: string;
-  lastName: string;
-  gender: string;
-  birthdate: Date;
+  id!: number;
+  username!: string;
+  password!: string;
+  title!: string;
+  first_name!: string;
+  last_name!: string;
+  gender!: string;
+  birthdate!: Date;
   contact?: string | undefined;
   email?: string | undefined;
-  imgUrl?: string | undefined;
+  image_url?: string | undefined;
   nationalId?: string | undefined;
   country?: string | undefined;
   city?: string | undefined;
   street?: string | undefined;
   postal?: string | undefined;
-  role: UserRole;
+  role!: UserRole;
   allergy?: string;
   conditions?: string;
   medications?: string;
@@ -63,36 +70,25 @@ export class User implements IUser {
   bio?: string;
   speciality?: string[];
   availability?: { start: Date, end: Date }[];
+  is_test: boolean = false;
+  extras?: any[];
 
   constructor(template: IUser) {
-    this.id = template.id;
-    this.username = template.username;
-    this.password = template.password;
-    this.firstName = template.firstName;
-    this.lastName = template.lastName;
-    this.gender = template.gender;
-    this.birthdate = template.birthdate;
-    this.contact = template.contact;
-    this.email = template.email;
-    this.imgUrl = template.imgUrl;
-    this.nationalId = template.nationalId;
-    this.role = template.role;
-    this.country = template.country;
-    this.city = template.city;
-    this.street = template.street;
-    this.postal = template.postal;
-    this.allergy = template.allergy;
-    this.conditions = template.conditions;
-    this.medications = template.medications;
-    this.emergencyContact = template.emergencyContact;
-    this.emergencyPerson = template.emergencyPerson;
-    this.clinic = template.clinic;
-    this.bio = template.bio;
-    this.speciality = template.speciality;
-    this.availability = template.availability;
+    let birthdate = !template.birthdate ? undefined : new Date(template.birthdate);
+    let image_url = template.image_url ?? Generator.randomPortraitUrl(template.gender === 'Male');
+    let langauges = template.extras?.filter(e => e.type === 'language').map(extra => extra.value)
+    let speciality = template.extras?.filter(e => e.type === 'specialty').map(extra => extra.value)
+    let bio = template.extras?.filter(e => e.type === 'statement').map(extra => extra.value).join('. ');
+    let is_test = template.extras?.filter(e => e.type === 'is_test').map(extra => extra.value).shift() ?? false;
+    let clinic = (template as any).addresses ? (template as any).addresses[0].label : undefined;
+
+    Object.assign(this, {
+      ...template,
+      birthdate, image_url, langauges, speciality, bio, is_test, clinic
+    });
   }
 
   get name(): string {
-      return this.firstName + " " + this.lastName;
+      return this.first_name + " " + this.last_name;
   }
 }

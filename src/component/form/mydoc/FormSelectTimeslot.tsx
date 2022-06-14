@@ -1,13 +1,12 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { FormButtonNav, FormTitle, FormProps, FormButton, Section } from "../../common";
-import { AppContext } from "../../../context/AppProvider";
 import { ITheme } from "../../../interfaces/ui";
 import { format } from "date-fns";
 import groupBy from "lodash/groupBy";
 import { CollapsiblePanel } from "../../control/CollapsiblePanel";
 import { ITimeslot } from "../../../interfaces/timeslot";
-import { IUser } from "../../../interfaces/user";
+import { User } from "../../../interfaces/user";
 
 
 const DoctorCard = styled.div`
@@ -61,15 +60,12 @@ const Timetable = styled.div <{theme: ITheme}>`
     }
 `
 
-export const FormSelectTimeslot = ({ input, defaultValue, onNext, onBack = undefined }: FormProps<IUser, ITimeslot>) => {
+export const FormSelectTimeslot = ({ input, theme, defaultValue, onNext, onBack = undefined }: FormProps<{ doctor: User, timeslots: ITimeslot[] }, ITimeslot>) => {
 
-
-    let { theme, data } = useContext(AppContext);
+    let { doctor, timeslots } = input!;
 
     const getEarliestAvailability = () => {
-        let doctorId = input!.id;
-        let availability = data.users.find(u => u.id === doctorId)?.availability;
-        return (availability && availability.length > 0) ? availability[0] : undefined;
+        return timeslots && timeslots.length ? timeslots[0] : undefined;
     }
 
     // track selections
@@ -77,21 +73,20 @@ export const FormSelectTimeslot = ({ input, defaultValue, onNext, onBack = undef
     let [timeslot, setTimeslot] = useState(earliest);
     let [expandedId, setExpandedId] = useState(0);
 
-    let timeslots = input!.availability!;
     let groupedTimeslots = groupBy(timeslots, (t) => format(t.start, "dd MMM yyyy, EEEE"));
 
     return (
         <Section>
             <FormTitle>Select Timeslot</FormTitle>
-            <DoctorCard key={input?.id}>
-                <img src={`${input?.imgUrl}`} alt=""/>
+            <DoctorCard key={doctor?.id}>
+                <img src={`${doctor?.image_url}`} alt=""/>
                 <div>
-                    <div className="name">{`${input?.firstName} ${input?.lastName}`}</div>
-                    <div className="specialty">{input?.speciality?.reduce((prev, curr) => `${prev}, ${curr}`)}</div>
-                    <div className="clinic">{input?.clinic}</div>
+                    <div className="name">{`${doctor?.first_name} ${doctor?.last_name}`}</div>
+                    <div className="specialty">{doctor?.speciality && doctor?.speciality.length > 0 ? doctor.speciality.reduce((prev, curr) => `${prev}, ${curr}`) : ''}</div>
+                    <div className="clinic">{doctor?.clinic}</div>
                 </div>
             </DoctorCard>
-            <DoctorBio>{input?.bio}</DoctorBio>
+            <DoctorBio>{doctor?.bio}</DoctorBio>
 
             {Object.keys(groupedTimeslots).map((date, i) => (
                 <CollapsiblePanel key={i} head={<p>{date}</p>} isCollapsed={i !== expandedId} onChange={(e, a) => !a.isCollapsing ? setExpandedId(i) : null }>

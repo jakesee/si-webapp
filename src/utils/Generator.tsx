@@ -1,8 +1,8 @@
 import { IDatabase } from "../interfaces/data";
-import { AppointmentStatus, MessageType, EpisodeStatus, EpisodeType, IAppointment, IMessage, IEpisode } from "../interfaces/episode";
+import { AppointmentStatus, MessageType, EpisodeStatus, EpisodeType, IMessage, IEpisode, Appointment } from "../interfaces/episode";
 import { IProvider } from "../interfaces/provider";
 import { ConsultedFor, ICasenote, ICasenoteRevision, IIcd10 } from "../interfaces/records";
-import { IUser, UserRole } from "../interfaces/user";
+import { IUser, User, UserRole } from "../interfaces/user";
 import Icd10Descriptions from './icd10_codes';
 
 const RANDOM = {
@@ -85,7 +85,7 @@ export default class Generator {
         const countDoctors = this.random(20, 50);
         const countEpisodes = this.random(15, 30);
 
-        const patients = [], doctors:IUser[] = [], appointments = [], episodes = [];
+        const patients = [], doctors:User[] = [], appointments = [], episodes = [];
 
         // generate patients
         for (let i = 0; i < countPatients; i++) {
@@ -115,9 +115,9 @@ export default class Generator {
             const hour1 = min15 * 4;
             let appointment = this.randomAppointment();
             var milliseconds = Date.now() + hour1 * 2 - (Math.random() * min15 * i);
-            appointment.episodeId = episode.id;
-            appointment.startAt = new Date(milliseconds);
-            appointment.endAt = new Date(milliseconds + min15);
+            appointment.episode_id = episode.id;
+            appointment.start_at = new Date(milliseconds);
+            appointment.end_at = new Date(milliseconds + min15);
             appointments.push(appointment);
         }
 
@@ -215,25 +215,26 @@ export default class Generator {
         return revision;
     }
 
-    public static randomUser(role: UserRole): IUser {
+    public static randomUser(role: UserRole): User {
 
         let firstName = this.anyone(RANDOM.firstNames);
         let lastName = this.anyone(RANDOM.firstNames);
         let domain = this.anyone(RANDOM.businesses).replace(' ', '').toLowerCase();
         let gender = this.anyone(RANDOM.gender);
 
-        let user: IUser = {
+        let user = new User({
             "id": this.random(10000, 99999),
             "birthdate": this.randomDate(),
-            "firstName": firstName,
-            "lastName": lastName,
+            "title": this.anyone(['Mr', 'Ms', 'Mrs', 'Mdm', 'Dr', '']),
+            "first_name": firstName,
+            "last_name": lastName,
             "email": `${firstName}.${lastName}@${domain}.com`,
             "contact": this.random(80000000, 99999999).toString(),
             "gender": gender,
             "nationalId": this.random(10000000, 99999999).toString(),
             "password": this.anyone(RANDOM.adjectives),
             "username": this.anyone(RANDOM.nouns),
-            "imgUrl": this.randomPortraitUrl(gender === 'Male'),
+            "image_url": this.randomPortraitUrl(gender === 'Male'),
             "country": this.anyone(RANDOM.countries),
             "city": this.anyone(RANDOM.cities),
             "street": `${this.random(10, 999)} ${this.anyone(RANDOM.places)}`,
@@ -243,10 +244,12 @@ export default class Generator {
             "medications": Array(5).fill(0).map(i => this.anyone(RANDOM.nouns)).join(', '),
             "emergencyContact": String(this.random(10000000, 99999999)),
             "emergencyPerson": this.anyone(RANDOM.firstNames) + ' ' + this.anyone(RANDOM.lastNames),
-            "role": role
-        };
+            "role": role,
+            "is_test": false,
+        });
 
         if (role === UserRole.doctor) {
+            user.title = 'Dr';
             user.clinic = this.anyone(RANDOM.clinicNames);
             user.bio = `${this.anyone(RANDOM.sentences)} ${this.anyone(RANDOM.sentences)} ${this.anyone(RANDOM.sentences)}`;
             user.speciality = this.any(RANDOM.speciality, this.random(1, 3));
@@ -273,7 +276,7 @@ export default class Generator {
         return timeslots;
     }
 
-    public static randomEpisode(patients: IUser[], doctors: IUser[], providers: IProvider[]) {
+    public static randomEpisode(patients: User[], doctors: User[], providers: IProvider[]) {
 
         const participants = [this.anyone(patients), this.anyone(doctors)];
 
@@ -283,13 +286,14 @@ export default class Generator {
             "id": this.random(10000, 99999),
             "messages": this.randomChatHistory(participants),
             "status": (this.random(1, 10) % 2 === 0) ? EpisodeStatus.Opened : EpisodeStatus.Closed,
-            "type": this.random(1, 6) as EpisodeType
+            "type": this.random(1, 6) as EpisodeType,
+            "created_at": new Date()
         }
 
         return episode;
     }
 
-    public static randomChatHistory(participants: IUser[]) {
+    public static randomChatHistory(participants: User[]) {
 
         const countMessages = this.random(3, 20);
         const startDateTime = this.randomDate(2020, 2021);
@@ -313,14 +317,15 @@ export default class Generator {
         return messsages;
     }
 
-    public static randomAppointment() {
-        let appointment: IAppointment = {
+    public static randomAppointment():Appointment {
+        let appointment = new Appointment({
             "id": this.random(10000, 99999),
-            "episodeId": 0,
-            "startAt": new Date(),
-            "endAt": new Date(),
+            "episode_id": 0,
+            "start_at": new Date(),
+            "end_at": new Date(),
             "status": this.random(1, 5) as AppointmentStatus,
-        }
+            "created_at": new Date()
+        })
 
         return appointment;
     }

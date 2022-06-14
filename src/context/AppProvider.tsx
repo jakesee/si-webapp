@@ -4,7 +4,6 @@ import { IDatabase } from "../interfaces/data";
 import { ITheme, Language } from "../interfaces/ui";
 import Generator from "../utils/Generator";
 import { createGlobalStyle } from "styled-components";
-import { IProvider } from "../interfaces/provider";
 
 export const GlobalStyles = createGlobalStyle<{ theme: ITheme }>`
 
@@ -58,14 +57,15 @@ export const GlobalStyles = createGlobalStyle<{ theme: ITheme }>`
 `
 
 interface IAppContext {
-    theme: ITheme;
-    language: Language;
+    theme: ITheme,
+    language: Language,
+    providerIds: number[],
     setLanguage: React.Dispatch<React.SetStateAction<Language>>,
-    data: IDatabase;
-    setData: React.Dispatch<React.SetStateAction<IDatabase>>;
+    data: IDatabase,
+    setData: React.Dispatch<React.SetStateAction<IDatabase>>
 }
 
-export const AppContext = createContext<IAppContext>({ theme: null!, language: Language.en, setLanguage: null!, data: null!, setData: null! });
+export const AppContext = createContext<IAppContext>({ theme: null!, providerIds: [], language: Language.en, setLanguage: null!, data: null!, setData: null! });
 
 export const AppProvider = ({ children }: { children?: ReactNode }) => {
 
@@ -73,18 +73,15 @@ export const AppProvider = ({ children }: { children?: ReactNode }) => {
     let newData = Generator.populateRandomData(Database);
     const [data, setData] = useState<IDatabase>(newData);
 
+    let groups = process.env.REACT_APP_MYDOC_GROUPS ?? "";
+    let newProviderIds = groups.split(';').map(g => parseInt(g));
+    const [providerIds] = useState<number[]>(newProviderIds);
+
     const [theme] = useState<ITheme>(Theme);
     const [language, setLanguage] = useState<Language>(Language.en);
 
-    const [providers, setProvider] = useState<IProvider[]>();
-
-    useEffect(() => {
-        let lsProviders = localStorage.getItem('providers')
-        lsProviders && setProvider(JSON.parse(lsProviders));
-    },[])
-
     return (
-        <AppContext.Provider value={{ theme, language, setLanguage, data, setData }}>
+        <AppContext.Provider value={{ theme, providerIds, language, setLanguage, data, setData }}>
             <GlobalStyles theme={theme} />
             {children}
         </AppContext.Provider>

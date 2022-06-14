@@ -28,9 +28,8 @@ export type IFormTriageQuestions = {
     other: string,
 }
 
-export const FormTriage = ({ defaultValue = { animal: "", symptoms: "", duration: "", other: ""} , onNext, onBack = undefined }: FormProps<void, IFormTriageQuestions>) => {
+export const FormTriage = ({ defaultValue = { animal: "", symptoms: "", duration: "", other: ""}, theme, onNext, onBack = undefined }: FormProps<void, IFormTriageQuestions>) => {
 
-    const { theme } = useContext(AppContext);
     let [symptoms, setSymptoms] = useState(defaultValue.symptoms ?? "");
     let [duration, setDuration] = useState(defaultValue.duration ?? "");
     let [animal, setAnimal] = useState(defaultValue.animal ?? "");
