@@ -16,6 +16,8 @@ export const useDashboard = () => {
 
     useEffect(() => {
 
+        if (!session || !accessToken) return;
+
         (async () => {
             try {
                 setIsError(false);
@@ -35,13 +37,14 @@ export const useDashboard = () => {
                     console.log('appointment', appointment);
                     setActiveAppointment(appointment);
                 }
-
                 setIsLoading(false);
-            } catch (err) {
+            } catch (err: any) {
+                console.log('useDashboard', err);
                 setIsError(true);
+                setIsLoading(false);
             }
         })()
-    }, [accessToken])
+    }, [accessToken, session])
 
     return { activeAppointment, activeConciergeEpisode, isLoading, isError }
 }

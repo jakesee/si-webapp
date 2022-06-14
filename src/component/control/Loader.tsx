@@ -1,4 +1,3 @@
-import { pink } from "@mui/material/colors"
 import styled from "styled-components"
 import { ITheme } from "../../interfaces/ui"
 
@@ -9,7 +8,7 @@ const Wrapper = styled.div`
     bottom: 0;
     left: 0;
     right: 0;
-    background-color: rgba(0, 0, 0, 0.54);
+    background-color: rgba(255, 255, 255, 0.54);
 
     display: flex;
     align-items: center;

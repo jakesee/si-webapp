@@ -6,11 +6,8 @@ import MedicalRecordsIcon from "../../../asset/mydoc/icon_medicalrecords.svg";
 import { useNavigate } from "react-router-dom";
 import { AppContext } from "../../../context/AppProvider";
 import { WideButton, Section } from "../../common";
-import { useAppointments } from "../../../hooks/useAppointments";
-import http from "../../../http";
 import { useDashboard } from "../../../hooks/useDashboard";
-import { AuthContext } from "../../../context/AuthProvider";
-import { Loader } from "../../control/Spinner";
+import { Loader } from "../../control/Loader";
 
 
 const Grid = styled.div`
