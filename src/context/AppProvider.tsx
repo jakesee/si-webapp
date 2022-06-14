@@ -1,10 +1,17 @@
+<<<<<<< HEAD
 import { createContext, ReactNode, useEffect, useState } from "react";
+=======
+import { createContext, ReactNode, useState } from "react";
+>>>>>>> 9492542e7a9e8c46025edec9b41d752a1c672ac4
 import { Database, Theme } from "../http/Database";
 import { IDatabase } from "../interfaces/data";
 import { ITheme, Language } from "../interfaces/ui";
 import Generator from "../utils/Generator";
 import { createGlobalStyle } from "styled-components";
+<<<<<<< HEAD
 import { IProvider } from "../interfaces/provider";
+=======
+>>>>>>> 9492542e7a9e8c46025edec9b41d752a1c672ac4
 
 export const GlobalStyles = createGlobalStyle<{ theme: ITheme }>`
 
@@ -76,6 +83,7 @@ export const AppProvider = ({ children }: { children?: ReactNode }) => {
     const [theme] = useState<ITheme>(Theme);
     const [language, setLanguage] = useState<Language>(Language.en);
 
+<<<<<<< HEAD
     const [providers, setProvider] = useState<IProvider[]>();
 
     useEffect(() => {
@@ -83,6 +91,8 @@ export const AppProvider = ({ children }: { children?: ReactNode }) => {
         lsProviders && setProvider(JSON.parse(lsProviders));
     },[])
 
+=======
+>>>>>>> 9492542e7a9e8c46025edec9b41d752a1c672ac4
     return (
         <AppContext.Provider value={{ theme, language, setLanguage, data, setData }}>
             <GlobalStyles theme={theme} />

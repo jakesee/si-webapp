@@ -1,7 +1,4 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
-import { IEpisode } from '../interfaces/episode';
-import { UserRole } from '../interfaces/user';
-import Generator from '../utils/Generator';
 import { Database } from './Database';
 
 
