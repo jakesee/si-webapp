@@ -35,7 +35,6 @@ export const useDashboard = () => {
                     http.getAppointments<Appointment>(accessToken!, session!.id).then(response => {
                         if (response?.OK()) {
                             let appointments = response.data.map(a => new Appointment(a))
-                            console.log('getAppointments', appointments);
                             setSortedAppointments(appointments);
                         }
                     })
@@ -50,7 +49,6 @@ export const useDashboard = () => {
 
 
             } catch (err: any) {
-                console.log('useDashboard', err);
                 setIsError(true);
                 setIsLoading(false);
             }

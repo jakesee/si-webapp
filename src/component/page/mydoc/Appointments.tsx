@@ -5,7 +5,7 @@ import { CollapsiblePanel } from "../../control/CollapsiblePanel";
 import { AppContext } from "../../../context/AppProvider";
 import { Page } from "../../control/Page";
 import { format } from "date-fns"
-import { Section, FormButton } from "../../common";
+import { Section, FormButton, WideButton } from "../../common";
 import { useAppointments } from "../../../hooks/useAppointments";
 import { AppointmentStatus, EpisodeStatus } from "../../../interfaces/episode";
 import { Loader } from "../../control/Loader";
@@ -43,35 +43,41 @@ export const Appointments = () => {
     return (
         <Page title="Appointments" backLabel="Dashboard" onBack={(e) => navigate('/')}>
             {isLoading && <Loader theme={theme} />}
-            <Section>
-                {appointments?.map((a, i) => (
-                    <CollapsiblePanel key={i} isCollapsed={i !== expandedId} onChange={(e, args) => setExpandedId(i)} head={
-                        <AppointmentCardHead>
-                            <span>{`${format(a.start_at, "dd MMM yyyy, HH:mm")}`}</span>
-                            {a.status === AppointmentStatus.Pending && (<FormButton theme={theme} color="primary" onClick={ () => navigate('/consultation-room') }>Enter Waiting Room</FormButton>)}
-                        </AppointmentCardHead>
-                    }>
-                        <h3>Appointment Details</h3>
-                        <AppointmentDetails>
-                            <table>
-                                <tbody>
-                                    <tr><td>Status</td><td>{a.getAppointmentStatusLabel(EpisodeStatus.Closed)}</td></tr>
-                                    <tr><td>Episode Id</td><td>{a.episode_id}</td></tr>
-                                    <tr><td>Specialisation</td><td>{a.group_name}</td></tr>
-                                    <tr><td>Doctor</td><td>{`${a.doctor?.first_name} ${a.doctor?.last_name}`}</td></tr>
-                                    <tr><td>Clinic</td><td>{a.doctor?.clinic}</td></tr>
-                                    <tr><td>Date/Time</td><td>{`${format(a.start_at, "dd MMM yyyy, HH:mm")} - ${format(a.end_at, "HH:mm")}`}</td></tr>
-                                </tbody>
-                            </table>
-                        </AppointmentDetails>
-                        <hr />
-                        <h4>Documents</h4>
-                        <div>
-                            <div>No files</div>
-                        </div>
-                    </CollapsiblePanel>
-                ))}
-            </Section>
+            {appointments?.length === 0 ? (
+                <Section>
+                    <WideButton theme={theme} color="primary" onClick={() => navigate('/start')}>You have no appointments, book now!</WideButton>
+                </Section>
+            ) : (
+                <Section>
+                    {appointments?.map((a, i) => (
+                        <CollapsiblePanel key={i} isCollapsed={i !== expandedId} onChange={(e, args) => setExpandedId(i)} head={
+                            <AppointmentCardHead>
+                                <span>{`${format(a.start_at, "dd MMM yyyy, HH:mm")}`}</span>
+                                {a.status === AppointmentStatus.Pending && (<FormButton theme={theme} color="primary" onClick={ () => navigate(`/consultation-room/${a.id}`) }>Enter Waiting Room</FormButton>)}
+                            </AppointmentCardHead>
+                        }>
+                            <h3>Appointment Details</h3>
+                            <AppointmentDetails>
+                                <table>
+                                    <tbody>
+                                        <tr><td>Status</td><td>{a.getAppointmentStatusLabel(EpisodeStatus.Closed)}</td></tr>
+                                        <tr><td>Episode Id</td><td>{a.episode_id}</td></tr>
+                                        <tr><td>Specialisation</td><td>{a.group_name}</td></tr>
+                                        <tr><td>Doctor</td><td>{`${a.doctor?.first_name} ${a.doctor?.last_name}`}</td></tr>
+                                        <tr><td>Clinic</td><td>{a.doctor?.clinic}</td></tr>
+                                        <tr><td>Date/Time</td><td>{`${format(a.start_at, "dd MMM yyyy, HH:mm")} - ${format(a.end_at, "HH:mm")}`}</td></tr>
+                                    </tbody>
+                                </table>
+                            </AppointmentDetails>
+                            <hr />
+                            <h4>Documents</h4>
+                            <div>
+                                <div>No files</div>
+                            </div>
+                        </CollapsiblePanel>
+                    ))}
+                </Section>
+            )}
         </Page>
     )
 }

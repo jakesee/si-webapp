@@ -1,19 +1,18 @@
-import React, { ReactNode, useContext, useEffect, useState } from "react";
+import React, { ReactNode, useContext, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
-import { useAppointments } from "../../../hooks/useAppointments";
 import { InfoBox } from "../../control/InfoBox";
 import { Page } from "../../control/Page";
-
 import { format } from "date-fns";
 import { AppContext } from "../../../context/AppProvider";
 import { Dialog } from "../../control/Dialog";
 import { ChatControl } from "../../control/ChatControl";
-import { AppointmentStatus, IMessage } from "../../../interfaces/episode";
-import { ChatBubble, ChatBubblePortrait } from "../../control/ChatBubble";
+import { IMessage } from "../../../interfaces/episode";
+import { ChatBubble } from "../../control/ChatBubble";
 import { AuthContext } from "../../../context/AuthProvider";
 import { useChatRoom } from "../../../hooks/useChatRoom";
 import { Loader } from "../../control/Loader";
+import { User } from "../../../interfaces/user";
 
 
 
@@ -42,17 +41,14 @@ export const ConsultationRoom = () => {
     const navigate = useNavigate();
     const { appointmentId } = useParams();
 
-    let { isLoading, isError, appointment, episode } = useChatRoom(parseInt(appointmentId!))
+    let { isLoading, appointment, episode, messages, sendChat } = useChatRoom(parseInt(appointmentId!))
 
     const { session } = useContext(AuthContext);
-    const { theme, data } = useContext(AppContext);
+    const { theme } = useContext(AppContext);
 
     const [showVideoNotReadyDialog, setShowVideoNotReadyDialog] = useState(false);
     const [showVideoReadyDialog, setShowVideoReadyDialog] = useState(false);
     const [isVideoReady, setIsVideoReady] = useState(false);
-
-
-    const [messages] = useState<IMessage[]>([])
 
     const onStartVideo = () => {
         if (isVideoReady)
@@ -66,7 +62,10 @@ export const ConsultationRoom = () => {
         setShowVideoReadyDialog(false);
     }
 
-    const onSendMessage = (e:any, message: string) => {
+    const onSendMessage = (e: any, message: string) => {
+
+        sendChat(message)
+
         if (message === 'start call now!') {
             setShowVideoReadyDialog(true);
             setIsVideoReady(true);
@@ -89,10 +88,12 @@ export const ConsultationRoom = () => {
             bgColor = `#B2E4E7`;
         }
 
+        const sender = new User(episode!.members.find(m => m.id === message.userId)!);
+
         return (
             <ChatBubble key={index} align={align} bgColor={bgColor}>
-                <ChatBubblePortrait src={data.users.find(u => u.id === message.userId)?.image_url} />
                 <div className="msg-bubble">
+                    <div className="sender-name" style={{ color: `${color(sender.name)}`, fontWeight: 'bold' }}>{sender.name}</div>
                     <div className="msg"><p>{message.message}</p></div>
                     <div className="meta">{format(message.datetime, "yyyy-MM-dd HH:mm")}</div>
                 </div>
@@ -122,7 +123,7 @@ export const ConsultationRoom = () => {
                 onAttach={(e) => onAttachFile(e) }
                 isVideoReady={isVideoReady}
             >
-                {!appointment ? <p>There is no upcoming appointment.</p> :
+                {!appointment ? <p>{ !isLoading && 'There is no upcoming appointment.'}</p> :
                     <>
                         <h3>Appointment Details</h3>
                         <AppointmentDetails>

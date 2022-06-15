@@ -1,9 +1,9 @@
-import { ConstructionOutlined } from "@mui/icons-material";
-import { IProvider } from "./provider";
-import { IUser, User, UserRole } from "./user";
+import { SocketMessage } from "../http/SocketService";
+import { IUser, User } from "./user";
 
 export enum MessageType {
-    Message = 1,
+    Message = "message",
+    Diary = "diary",
     Json = 2,
     Appointment = 3,
     Laboratory = 4,
@@ -33,7 +33,7 @@ export enum EpisodeType {
 
 export interface IEpisode {
     id: number;
-    participants: IUser[];
+    members: IUser[];
     providerId: number;
     messages: IMessage[];
     status: EpisodeStatus,
@@ -63,14 +63,12 @@ export class Episode implements IEpisode {
     providerId!: number;
     status!: EpisodeStatus;
     type!: EpisodeType;
-    participants!: IUser[];
+    members!: IUser[];
     messages!: IMessage[];
     created_at: Date = new Date();
     chat_id_username: string = "";
 
     constructor(template: IEpisode) {
-        console.log('Episode', template);
-
         let created_at = new Date(template.created_at);
 
         Object.assign(this, {
@@ -86,13 +84,36 @@ export class Message implements IMessage {
     datetime: Date;
     type: MessageType;
 
-    constructor(template: IMessage, public user: User) {
+    constructor(template: IMessage) {
         this.userId = template.userId;
         this.message = template.message;
         this.datetime = template.datetime;
         this.type = template.type;
     }
 
+    public static fromSocketMessage(message: SocketMessage) {
+        let newMessage: IMessage = {
+            userId: message.sender_id,
+            message: message.payload,
+            datetime: new Date(message.object_time),
+            type: message.object_type
+        }
+        return new Message(newMessage);
+    }
+
+    public static fromAPI(message: any) {
+        let template: IMessage = {
+            userId: parseInt(message.sender.id),
+            message: message.content as string,
+            type: message.type as MessageType,
+            datetime: new Date(message.created_at),
+        }
+        return new Message(template);
+    }
+
+    public static sort(messages: Message[]) {
+        return messages.sort((a, b) => a.datetime.getTime() - b.datetime.getTime());
+    }
 }
 
 export enum AppointmentStatus {
@@ -121,7 +142,7 @@ export class Appointment implements IAppointment {
         let duration = template.duration ?? 15;
         let created_at = new Date(template.created_at!);
         let start_at = new Date(template.start_at!)
-        let end_at = new Date(start_at.getTime() + duration * 60 * 60 * 1000);
+        let end_at = new Date(start_at.getTime() + duration * 60 * 1000);
         let _template = (template as any)?.doctor?.doctor?.account ?? null;
         let doctor = _template ? new User(_template) : undefined;
 

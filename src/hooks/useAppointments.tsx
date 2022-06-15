@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthProvider";
 import http from "../http";
-import { Appointment, AppointmentStatus, Episode, EpisodeStatus, IAppointment } from "../interfaces/episode";
+import { Appointment, Episode, IAppointment, IEpisode } from "../interfaces/episode";
 
 
 export const useAppointments = () => {
@@ -24,7 +24,6 @@ export const useAppointments = () => {
             if (response?.OK()) {
                 let appointments: Appointment[] = response.data.map(a => new Appointment(a))
                 let sorted = appointments.sort((a, b) => b.start_at.getTime() - a.start_at.getTime())
-                console.log('getAppointments', sorted);
                 setAppointments(sorted);
             }
             setIsLoading(false);
@@ -34,6 +33,28 @@ export const useAppointments = () => {
         })
     }, [accessToken, session]);
 
+    useEffect(() => {
+
+        if (!selectedAppointment) return;
+
+        setIsError(false);
+        setIsLoading(true);
+
+        // fetch episode
+        http.getEpisode<IEpisode>(accessToken!, selectedAppointment.episode_id).then(response => {
+            let episode: Episode | undefined = undefined;
+            if (response?.OK()) {
+                episode = new Episode(response.data);
+            }
+            selectEpisode(episode);
+            setIsLoading(false);
+        }).catch(reason => {
+            setIsError(true);
+            setIsLoading(false);
+        })
+
+    }, [selectedAppointment, accessToken])
+
 
     useEffect(() => {
         // get other details e.g. case notes and e-documents
@@ -42,7 +63,8 @@ export const useAppointments = () => {
     return {
         isLoading, isError,
         appointments,
-        selectedAppointment, selectAppointment
+        selectedAppointment, selectAppointment,
+        selectedEpisode
     }
 
 }

@@ -1,0 +1,2 @@
+- system can send triage responses to episode chat after appointment booking
+- user can attach file in chat room

@@ -1,4 +1,4 @@
-import React, { ReactNode, useRef, useState } from "react";
+import React, { ReactNode, useEffect, useRef, useState } from "react";
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import VideoCameraFrontIcon from '@mui/icons-material/VideoCameraFront';
 import SendIcon from '@mui/icons-material/Send';
@@ -15,6 +15,8 @@ const Wrapper = styled.div`
 `
 const Content = styled.div`
     background-color: #F8F9F9;
+    /* background-image: radial-gradient(#cccccc 1px, transparent 0);
+    background-size: 40px 40px; */
     overflow-x: hidden;
     overflow-y: scroll;
     padding: 20px;
@@ -63,6 +65,7 @@ export const ChatControl = <T,>({ children, theme, onStartVideo, isVideoReady = 
     const muiIconSx = { fontSize: "2.1em", color: `rgba(0, 0, 0, 0.54)` }
 
     let inputFile = useRef<HTMLInputElement>(null);
+    let content = useRef<HTMLDivElement>(null);
 
     let [message, setMessage] = useState("")
 
@@ -71,12 +74,12 @@ export const ChatControl = <T,>({ children, theme, onStartVideo, isVideoReady = 
         for (let i = 0; i < ref.length; i++) {
             hash = ref.charCodeAt(i) + ((hash << 5) - hash);
         }
-        let colour = '#';
+        let color = '#';
         for (let i = 0; i < 3; i++) {
             let value = (hash >> (i * 8)) & 0xFF;
-            colour += ('00' + value.toString(16)).substring(-1);
+            color += ('00' + value.toString(16)).substring(2, 4);
         }
-        return colour;
+        return color;
     }
 
     const onSendMessage = (e: any, message: string) => {
@@ -104,9 +107,17 @@ export const ChatControl = <T,>({ children, theme, onStartVideo, isVideoReady = 
         }
     }
 
+    // scroll to the bottom when new message comes
+    useEffect(() => {
+        if (content.current) {
+            content.current.scrollTop = content.current?.scrollHeight;
+        }
+
+    }, [messages])
+
     return (
         <Wrapper>
-            <Content>
+            <Content ref={content}>
                 { children }
                 {messages.map((m, i) => onRenderMessage(m, i, toColor)) }
             </Content>

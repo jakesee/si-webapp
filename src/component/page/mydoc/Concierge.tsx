@@ -17,7 +17,7 @@ export const Concierge = () => {
     const { session } = useContext(AuthContext);
     const { theme, data } = useContext(AppContext);
 
-    let userEpisodes = data.episodes.filter(e => e.type === EpisodeType.CallCentre && e.participants.map(p => p.id).includes(session!.id));
+    let userEpisodes = data.episodes.filter(e => e.type === EpisodeType.CallCentre && e.members.map(p => p.id).includes(session!.id));
     userEpisodes = userEpisodes.sort((a, b) => b.id - a.id);
 
     const episode = userEpisodes ? userEpisodes[0] : undefined;

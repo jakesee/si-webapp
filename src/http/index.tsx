@@ -57,22 +57,6 @@ const cache = {
 
 const interceptor = {
 
-    responseHandler(response: AxiosResponse<any>): AxiosResponse<any> {
-        if (response.config.method === 'GET' || 'get') {
-            if (response.config.url && !cache.isURLInWhiteList(response.config.url)) {
-                cache.store(response.config.url, JSON.stringify(response.data));
-            }
-        }
-        return response;
-    },
-
-    errorHandler(error: any) {
-        if (error.headers.cached === true) {
-            return Promise.resolve(error);
-        }
-        return Promise.reject(error);
-    },
-
     requestHandler(request: AxiosRequestConfig) {
         if (request.method === 'GET' || 'get') {
             const checkIsValidResponse = cache.isValid(request.url || '');
@@ -83,7 +67,23 @@ const interceptor = {
             }
         }
         return request;
-    }
+    },
+
+    errorHandler(error: any) {
+        if (true === (error.headers ? error.headers.cached : undefined)) {
+            return Promise.resolve(error);
+        }
+        return Promise.reject(error);
+    },
+
+    responseHandler(response: AxiosResponse<any>): AxiosResponse<any> {
+        if (response.config.method === 'GET' || 'get') {
+            if (response.config.url && !cache.isURLInWhiteList(response.config.url)) {
+                cache.store(response.config.url, JSON.stringify(response.data));
+            }
+        }
+        return response;
+    },
 }
 
 // use a custom axios client
@@ -133,7 +133,9 @@ const http = {
     },
 
     async signIn<T>(username: string, password: string) {
-        return Database.users.find(u => u.id === 64329);
+        let user = Database.users.find(u => u.id === 64329);
+        user!.chat_id_username = 'patient_64329@chat.qa.my-doc.com';
+        return user as any as T;
     },
 
     async signOut() {
@@ -159,8 +161,7 @@ const http = {
     async createAppointment<T>(access_token: string, episodeId: number, userId:number, doctorId: number, start: Date, duration: number) {
         try {
             const config = { headers: { Authorization: `Bearer ${access_token}` } };
-            let start_at = format(start, "yyyy-MM-dd'T'HH:mm:00'Z'")
-            console.log(start_at);
+            let start_at = format(start, "yyyy-MM-dd'T'HH:mm:00'Z'");
             const formData: FormData = new FormData();
             formData.append('type', 'clinic');
             formData.append('start_at', start_at);
@@ -199,7 +200,7 @@ const http = {
             return new HttpResponse<T>({
                 ...response,
                 code: parseInt(response.code),
-                data: response.data.episodes
+                data: response.data
             });
         } catch (error) {
             this._logError(error);

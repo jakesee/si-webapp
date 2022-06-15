@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { AppContext } from "../context/AppProvider";
 import { AuthContext } from "../context/AuthProvider";
 import http from "../http";
-import { Appointment, IEpisode, IMessage, MessageType, IAppointment } from "../interfaces/episode";
+import { Appointment, IEpisode, IAppointment } from "../interfaces/episode";
 import { IProvider, Provider } from "../interfaces/provider";
 import { ITimeslot } from "../interfaces/timeslot";
 import { IUser, User } from "../interfaces/user";
@@ -46,7 +46,6 @@ export const useJourney = <T extends Dictionary<string>,>(user: User, totalSteps
     let [isError, setIsError] = useState(false);
 
     // form input data
-    let { setData } = useContext(AppContext);
     let [doctors, setDoctors] = useState<User[]>([]);
     let [timeslots, setTimeslots] = useState<ITimeslot[]>([]);
     let [providers, setProviders] = useState<IProvider[]>([]);
@@ -78,33 +77,28 @@ export const useJourney = <T extends Dictionary<string>,>(user: User, totalSteps
 
         http.createEpisode<IEpisode>(accessToken, provider?.id, [patient.id, doctor.id]).then(response => {
 
-            console.log('createEpisode', response);
             if (response && response.code === 200 && accessToken && doctor && timeslot && provider) {
                 setActiveEpisode(response.data);
-                console.log('episode', response.data.id)
                 http.createAppointment<IAppointment>(accessToken, response.data.id, patient.id, doctor?.id, timeslot?.start, provider?.consultation_duration).then(response => {
-                    console.log('createAppointment', response);
                     if (response) {
                         setActiveAppointment(new Appointment(response.data));
-                        console.log('appointment', response.data.id)
-                        console.log("appt id:", activeAppointment?.id, "episode id:", activeEpisode?.id);
                         done();
                     }
+                    setIsLoading(false);
                 })
             }
-
-            setIsLoading(false);
 
         }).catch(error => {
             setIsError(true);
         });
 
-        let message: IMessage = {
-            userId: patient.id,
-            message: Object.keys(triage!).map((key) => `${key}: ${triage && triage[key]}`).reduce((prev, next) => `${prev}; ${next}`),
-            datetime: new Date(),
-            type: MessageType.Message
-        }
+        // TODO: send to episode via API
+        // let message: IMessage = {
+        //     userId: patient.id,
+        //     message: Object.keys(triage!).map((key) => `${key}: ${triage && triage[key]}`).reduce((prev, next) => `${prev}; ${next}`),
+        //     datetime: new Date(),
+        //     type: MessageType.Message
+        // }
     }
 
     // load the providers on init
@@ -160,7 +154,7 @@ export const useJourney = <T extends Dictionary<string>,>(user: User, totalSteps
             if (value) {
                 let timeslots = value.map(v => {
                     let start = new Date(v);
-                    let end = new Date(start.getTime() + (provider?.consultation_duration ?? 15) * 60 * 60 * 1000);
+                    let end = new Date(start.getTime() + (provider?.consultation_duration ?? 15) * 60 * 1000);
                     let timeslot: ITimeslot = { start, end }
                     return timeslot;
                 })

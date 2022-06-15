@@ -8,7 +8,7 @@ export const ChatBubble = styled.div<{ align?: 'left' | 'right', bgColor?: strin
 
 
     .msg-bubble {
-        background-color: ${p => p.bgColor ?? `#CBDDF6`};
+        background-color: ${p => p.bgColor ?? `#ffffff`}; //#CBDDF6
         padding: 10px;
         margin-bottom: 10px;
         border-radius: 5px;

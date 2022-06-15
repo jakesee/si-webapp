@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useEffect, useState } from "react";
+import { createContext, ReactNode, useState } from "react";
 import { Database, Theme } from "../http/Database";
 import { IDatabase } from "../interfaces/data";
 import { ITheme, Language } from "../interfaces/ui";
@@ -62,7 +62,7 @@ interface IAppContext {
     providerIds: number[],
     setLanguage: React.Dispatch<React.SetStateAction<Language>>,
     data: IDatabase,
-    setData: React.Dispatch<React.SetStateAction<IDatabase>>
+    setData: React.Dispatch<React.SetStateAction<IDatabase>>,
 }
 
 export const AppContext = createContext<IAppContext>({ theme: null!, providerIds: [], language: Language.en, setLanguage: null!, data: null!, setData: null! });

@@ -73,6 +73,7 @@ export class User implements IUser {
   availability?: { start: Date, end: Date }[];
   is_test: boolean = false;
   extras?: any[];
+  chat_id_username?: string;
 
   constructor(template: IUser) {
     let birthdate = !template.birthdate ? undefined : new Date(template.birthdate);
@@ -81,7 +82,7 @@ export class User implements IUser {
     let speciality = template.extras?.filter(e => e.type === 'specialty').map(extra => extra.value)
     let bio = template.extras?.filter(e => e.type === 'statement').map(extra => extra.value).join('. ');
     let is_test = template.extras?.filter(e => e.type === 'is_test').map(extra => extra.value).shift() ?? false;
-    let clinic = (template as any).addresses ? (template as any).addresses[0].label : undefined;
+    let clinic = (template as any).addresses ? (template as any).addresses[0] ? (template as any).addresses[0].label ?? undefined : undefined : undefined;
 
     Object.assign(this, {
       ...template,

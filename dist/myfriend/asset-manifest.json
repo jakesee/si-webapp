@@ -1,0 +1,14 @@
+{
+  "files": {
+    "main.js": "/myfriend/static/js/main.c3b234d6.js",
+    "static/js/787.002bde83.chunk.js": "/myfriend/static/js/787.002bde83.chunk.js",
+    "static/media/icon_chathistory.svg": "/myfriend/static/media/icon_chathistory.47a3378d9613d7482b1ebc5d9a16f46f.svg",
+    "static/media/icon_medicalrecords.svg": "/myfriend/static/media/icon_medicalrecords.c9e55ae0c59e476073af24f91ca8a22b.svg",
+    "index.html": "/myfriend/index.html",
+    "main.c3b234d6.js.map": "/myfriend/static/js/main.c3b234d6.js.map",
+    "787.002bde83.chunk.js.map": "/myfriend/static/js/787.002bde83.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/js/main.c3b234d6.js"
+  ]
+}

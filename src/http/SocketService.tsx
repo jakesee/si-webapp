@@ -20,8 +20,8 @@ export interface ISocketMessage {
     episode_id: number,
     object_type: 'message' | string,
     object_id: string,
-    object_time: Date,
-    display_time: Date,
+    object_time: string,
+    display_time: string,
     sub_type: null,
     to: number, // episode id
     from: number, // user id
@@ -38,10 +38,10 @@ export class SocketMessage implements ISocketMessage {
     object_type: any;
     object_id: any;
     payload_type: any;
-    sender_id: any;
+    sender_id!: number;
     payload: any;
-    object_time!: Date;
-    display_time!: Date;
+    object_time: any;
+    display_time: any;
     sub_type: null = null;
     to!: number;
     from!: number;
@@ -50,92 +50,104 @@ export class SocketMessage implements ISocketMessage {
         Object.assign(this, data);
     }
 
-    public isEventEpisodeClosed(episodeId:number) {
-        return this.episode
+    public isEventEpisodeClosed(episodeId?:number) {
+        return (
+            this.episode
             && Object.keys(this.episode).length > 0
             && this.episode.id
-            && this.episode.id === episodeId
-            && this.status === 'closed';
+            && this.episode_id === (episodeId ?? this.episode_id)
+            && this.status === 'closed'
+        );
     }
 
-    public isEventEpisodeChat(episodeId: number) {
-        return this.episode_id === episodeId &&
-        this.object_type &&
-        this.object_type === 'message' &&
-        this.payload_type === 'text'
+    public isEventEpisodeChat(episodeId?: number) {
+        let destination = (episodeId ?? this.episode_id);
+        return (
+            this.episode_id === destination
+            && this.object_type
+            && this.object_type === 'message'
+            && this.payload_type === 'text'
+        );
     }
 
-    public isEventDoctorJoined(episodeId: number) {
-        return this.episode_id === episodeId &&
-            this.object_type &&
-            this.object_type === 'message' &&
-            this.payload_type === 'json' &&
-            this.payload &&
-            this.payload._ &&
-            this.payload._.body &&
-            this.payload._.body.key === 'appointments_others_isready'
+    public isEventDoctorJoined(episodeId?: number) {
+        return (
+            this.episode_id === (episodeId ?? this.episode_id)
+            && this.object_type
+            && this.object_type === 'message'
+            && this.payload_type === 'json'
+            && this.payload
+            && this.payload._
+            && this.payload._.body
+            && this.payload._.body.key === 'appointments_others_isready'
+        );
     }
-
 }
 
-export class SocketService {
+export class SocketService<T = SocketMessage> {
 
     private _socket!: WebSocket;
     public eventEmitter: EventEmitter = new EventEmitter();
+
+    public onMessage?: (message: T) => void;
+
     public messages: SocketMessage[] = [];
     private _queue: SocketMessage[] = [];
-    public episodeId!: number;
-    public doctorEpisodeId!: number;
 
     private _keepAliveInterval: any;
 
-    constructor(accessToken: string, episodeId: number, doctorEpisodeId: number) {
-        // do nothing
-        this.episodeId = episodeId;
-        this.doctorEpisodeId = doctorEpisodeId;
+    constructor(accessToken: string) {
         this.init(accessToken);
     }
 
     public init(accessToken: string) {
         const socketUrl = `${process.env.REACT_APP_MYDOC_SOCKET_URL}/${accessToken}`;
         this._socket = new WebSocket(socketUrl);
+
+        this._socket.onerror = (event: any) => {
+            console.log('SocketService error:', event);
+        }
+
+        // set connection open handler to keep alive and process user message queue
         this._socket.onopen = (event: any) => {
-            console.log('socket-open');
             this._initKeepAliveInterval(accessToken);
             this._processQueue();
-            if (this.messages.length > 0) {
-                this.eventEmitter.emit(SocketEvent.INIT);
-            }
         };
+
+        // set message handler
         this._socket.onmessage = (event: any) => {
-            const newMessage = new SocketMessage(JSON.parse(event.data));
-            if (newMessage.isEventDoctorJoined(this.doctorEpisodeId))
-                this.eventEmitter.emit(SocketEvent.APPOINTMENT_READY, newMessage);
 
-            if (newMessage.isEventEpisodeClosed(this.episodeId))
-                this.eventEmitter.emit(SocketEvent.EPISODE_CLOSED, newMessage);
+            // TODO: Fix the socket server.
+            // This message processing is wrapped in setTimeout() because
+            // the socket server is sending 2 onmessage event for each message.
+            // By adding 1000ms delay, we can drop the duplicate event.
+            setTimeout((socket) => {
+                const newMessage = new SocketMessage(JSON.parse(event.data));
 
-            if (newMessage.isEventEpisodeChat(this.episodeId)) {
                 // remove new message from send queue
-                this._queue = this._queue.filter(pending => pending.object_id !== newMessage.object_id);
+                socket._queue = socket._queue.filter(pending => pending.object_id !== newMessage.object_id);
 
-                const found = this.messages.find(message => message.object_id === newMessage.object_id);
+                // find whether the message already exists
+                const exists = socket.messages.find(message => message.object_id === newMessage.object_id);
 
-                if (!found) {
-                    this.messages.push(newMessage);
-                    this.messages = this.messages.sort((a, b) => a.id - b.id);
-                    this.eventEmitter.emit(SocketEvent.MESSAGE_RECEIVED, newMessage);
+                if (!exists) {
+                    console.log('SocketService::SocketMessage', newMessage.payload);
+                    socket.messages.push(newMessage);
+                    socket.messages = socket.messages.sort((a, b) => a.id - b.id);
+                    socket.onMessage && socket.onMessage(newMessage as any as T);
+                    socket.eventEmitter.emit(SocketEvent.MESSAGE_RECEIVED, newMessage as any as T);
                 }
-            }
-
+            }, 1000, this);
         };
+
+        // set close handler
         this._socket.onclose = (event: any) => {
-            console.log('websocket closed successfully');
+            // TODO: Do something
         };
     }
 
-    public sendMessage(accessToken: string, episodeId: number, episodeChatId: number, fromUserId: number, fromChatId: number, message: string): void {
-        const toMessage = new SocketMessage({
+    public sendMessage(accessToken: string, episodeId: number, episodeChatId: string, fromUserId: number, fromChatId: string, message: string): void {
+        const toMessage = {
             episode_id: episodeId,
             object_type: 'message',
             object_id: this.UUID(),
@@ -147,14 +159,14 @@ export class SocketService {
             sender_id: fromUserId,
             payload_type: 'text',
             payload: message,
-        });
+        };
         if (!(this._socket.readyState === WebSocketReadyState.OPEN)) {
             if ([WebSocketReadyState.CLOSING, WebSocketReadyState.CLOSED].includes(this._socket.readyState)) {
                 this.init(accessToken);
             }
         }
-        this.messages.push(toMessage);
-        this._queue.push(toMessage);
+        const socketMessage = new SocketMessage(toMessage);
+        this._queue.push(socketMessage);
         this._socket.send(JSON.stringify(toMessage));
     }
 
@@ -167,7 +179,7 @@ export class SocketService {
                 const r = (dt + Math.random() * 16) % 16 | 0;
                 dt = Math.floor(dt / 16);
                 // tslint:disable-next-line: triple-equals // tslint:disable-next-line: no-bitwise
-                return (c == 'x' ? r : (r & 0x3) | 0x8).toString(16);
+                return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16);
             }
         );
         return uuid;
@@ -185,7 +197,7 @@ export class SocketService {
             } else if (this._socket.readyState === WebSocketReadyState.OPEN) {
                 this._socket.send('');
             }
-        }, 10000);
+        }, 40000);
     }
 
     private _processQueue() {

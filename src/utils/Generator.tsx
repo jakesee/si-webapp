@@ -2,7 +2,7 @@ import { IDatabase } from "../interfaces/data";
 import { AppointmentStatus, MessageType, EpisodeStatus, EpisodeType, IMessage, IEpisode, Appointment, Episode } from "../interfaces/episode";
 import { IProvider } from "../interfaces/provider";
 import { ConsultedFor, ICasenote, ICasenoteRevision, IIcd10 } from "../interfaces/records";
-import { IUser, User, UserRole } from "../interfaces/user";
+import { User, UserRole } from "../interfaces/user";
 import Icd10Descriptions from './icd10_codes';
 
 const RANDOM = {
@@ -180,8 +180,8 @@ export default class Generator {
     }
 
     public static randomCasenote(episode: IEpisode): ICasenote | null{
-        const doctor = episode.participants.find(p => p.role === UserRole.doctor);
-        const patient = episode.participants.find(p => p.role === UserRole.patient);
+        const doctor = episode.members.find(p => p.role === UserRole.doctor);
+        const patient = episode.members.find(p => p.role === UserRole.patient);
         if (doctor && patient) {
             const casenote: ICasenote = {
                 "id": this.random(10000, 99999),
@@ -281,7 +281,7 @@ export default class Generator {
         const participants = [this.anyone(patients), this.anyone(doctors)];
 
         let episode = new Episode({
-            "participants": participants,
+            "members": participants,
             "providerId": this.anyone(providers).id,
             "id": this.random(10000, 99999),
             "messages": this.randomChatHistory(participants),

@@ -8,7 +8,6 @@ import { AppContext } from "../../../context/AppProvider";
 import { WideButton, Section } from "../../common";
 import { useDashboard } from "../../../hooks/useDashboard";
 import { Loader } from "../../control/Loader";
-import { AppointmentStatus } from "../../../interfaces/episode";
 
 
 const Grid = styled.div`
@@ -35,9 +34,7 @@ export const Home = () => {
     const navigate = useNavigate();
     const { theme } = useContext(AppContext);
 
-    // const { getUpcomingAppointment } = useAppointments();
-    //const upcomingAppointment = getUpcomingAppointment();
-    let { isLoading, isError, sortedAppointments } = useDashboard();
+    let { isLoading, sortedAppointments } = useDashboard();
 
     let activeAppointment = sortedAppointments?.find(a => a.isUpcoming());
 
