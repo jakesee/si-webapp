@@ -10,7 +10,7 @@ import { AppContext } from "../../../context/AppContext";
 import { Dialog } from "../../control/Dialog";
 import { ChatControl } from "../../control/ChatControl";
 import { IMessage } from "../../../interfaces/episode";
-import { ChatBubble, ChatBubblePortrait } from "../../control/ChatBubble";
+import { ChatBubble } from "../../control/ChatBubble";
 import { User } from "../../../interfaces/user";
 
 
