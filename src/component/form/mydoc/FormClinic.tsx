@@ -27,7 +27,7 @@ export const FormClinic = ({ onNext, onBack }: FormProps<void, number>) => {
         <Section>
             <FormTitle>Choose a Specialist Clinic</FormTitle>
             <ClinicGrid>
-                {data.providers.map(clinic =>
+                {data.providers.filter(p => p.id <= 3).map(clinic =>
                     <ClinicCell key={clinic.id} onClick={(e) => onNext(e, clinic.id)}>
                         <div className="name">{clinic.title}</div>
                     </ClinicCell>

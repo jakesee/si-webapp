@@ -11,6 +11,7 @@ import { Dialog } from "../../control/Dialog";
 import { ChatControl } from "../../control/ChatControl";
 import { IMessage } from "../../../interfaces/episode";
 import { ChatBubble, ChatBubblePortrait } from "../../control/ChatBubble";
+import { User } from "../../../interfaces/user";
 
 
 
@@ -81,13 +82,17 @@ export const ConsultationRoom = () => {
         let bgColor = undefined;
         if (message.userId === session?.id) {
             align = 'right';
-            bgColor = `#B2E4E7`;
+            bgColor = `#cbf0f1`;
+        } else {
+            bgColor = `#ffffff`;
         }
+
+        let sender = new User(data.users.find(u => u.id === message.userId)!);
 
         return (
             <ChatBubble key={index} align={align} bgColor={bgColor}>
-                <ChatBubblePortrait src={data.users.find(u => u.id === message.userId)?.imgUrl} />
                 <div className="msg-bubble">
+                    <div className="name" style={{color: color(sender.name)}}>{sender.name}</div>
                     <div className="msg"><p>{message.message}</p></div>
                     <div className="meta">{format(message.datetime, "yyyy-MM-dd HH:mm")}</div>
                 </div>

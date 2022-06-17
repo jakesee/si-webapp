@@ -74,7 +74,7 @@ export const ChatControl = <T,>({ children, theme, onStartVideo, isVideoReady = 
         let colour = '#';
         for (let i = 0; i < 3; i++) {
             let value = (hash >> (i * 8)) & 0xFF;
-            colour += ('00' + value.toString(16)).substring(-1);
+            colour += ('00' + value.toString(16)).substring(2, 4);
         }
         return colour;
     }
